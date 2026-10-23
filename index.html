@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud-Based Big Data Solutions · EMR / HDInsight & Monitoring · Interactive Explainer</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f8fd; --ink:#13233a; --muted:#5b6b80; --line:#dbe5f0; --grid:#e9f0f7;
+  --ocean:#0b6bcb; --ocean-soft:#e2effc;
+  --tang:#f2711c; --tang-soft:#feeee2;
+  --grass:#23a55a; --grass-soft:#e1f5e8;
+  --berry:#d6336c; --berry-soft:#fbe5ee;
+  --lilac:#7b61ff; --lilac-soft:#efecff;
+  --gold:#e0a100; --gold-soft:#fdf3d5; --gold-ink:#8f6700;
+  --accent:var(--ocean); --accent-soft:var(--ocean-soft);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.6}
+.mono{font-family:'Roboto Mono',ui-monospace,Consolas,monospace}
+code{color:var(--ocean);background:var(--ocean-soft);border-radius:5px;padding:.05rem .3rem;font-size:.84em;font-family:'Roboto Mono',monospace}
+:focus-visible{outline:3px solid var(--ocean)!important;outline-offset:2px}
+b,strong{font-weight:800}
+
+/* hero */
+.hero{background:linear-gradient(180deg,#dcecfb 0%,#f3f8fd 100%);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.85;pointer-events:none}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud::before{width:55%;height:160%;left:15%;top:-80%}
+.cloud::after{width:40%;height:130%;right:12%;top:-55%}
+.hero-cluster{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:300px;pointer-events:none}
+.hc-node{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:1.1rem;box-shadow:0 6px 14px -8px rgba(19,35,58,.5)}
+.hc-meter{font-family:'Roboto Mono',monospace;font-weight:600;background:#fff;border-radius:12px;padding:.35rem .75rem;display:inline-block;border:1px solid var(--line)}
+.hero .container-xl{position:relative}
+.crumb{display:inline-flex;align-items:center;gap:.45rem;font-size:.86rem;color:var(--muted);font-weight:700}
+.crumb i{color:var(--ocean)}
+.hero h1{font-weight:900;font-size:clamp(1.8rem,3.3vw,2.6rem);letter-spacing:-.02em;line-height:1.12;margin:.5rem 0 .6rem;max-width:20ch}
+.hero .goal{max-width:62ch;color:var(--muted);font-size:1.02rem;margin:0}
+.lesson-card{display:flex;gap:.9rem;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:18px;padding:1rem 1.1rem;transition:border-color .2s,box-shadow .2s;color:var(--ink)}
+.lesson-card:hover{border-color:#bcd0e6}
+.lesson-card.active{border-color:var(--lc);box-shadow:0 0 0 4px var(--lcs)}
+.lesson-card .lnum{flex:0 0 46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:1.3rem;background:var(--lcs);color:var(--lc)}
+.lesson-card .lt{font-weight:800;line-height:1.3}
+.lesson-card .ls{font-size:.84rem;color:var(--muted)}
+.lprog{height:5px;background:var(--grid);border-radius:4px;margin-top:.5rem;overflow:hidden}
+.lprog i{display:block;height:100%;background:var(--lc);width:0;transition:width .4s}
+.prov-switch{display:inline-flex;background:#fff;border:2px solid var(--line);border-radius:999px;padding:3px}
+.prov-switch button{border:0;background:transparent;border-radius:999px;padding:.3rem .9rem;font-weight:800;font-size:.85rem;color:var(--muted)}
+.prov-switch button.active{color:#fff}
+.prov-switch button.active[data-p=aws]{background:var(--tang)}
+.prov-switch button.active[data-p=azure]{background:var(--ocean)}
+
+/* rail */
+.rail{background:#fff;border:1px solid var(--line);border-radius:18px;padding:.75rem}
+.rail-head{font-size:.84rem;color:var(--muted);padding:.25rem .5rem .6rem;border-bottom:1px solid var(--line);margin-bottom:.4rem}
+.rail-head b{color:var(--ink);display:block;font-size:.95rem}
+.rail-list{list-style:none;margin:0;padding:0}
+.rail-list button{display:flex;align-items:center;gap:.6rem;width:100%;border:0;background:transparent;text-align:left;padding:.4rem .5rem;border-radius:12px;font-size:.88rem;color:var(--ink);line-height:1.3;font-weight:600}
+.rail-list button:hover{background:var(--bg)}
+.rail-list button.active{background:var(--sc-soft);font-weight:800}
+.rail-list .n{flex:0 0 26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;font-weight:800;border:2px solid var(--sc);color:var(--sc);background:#fff}
+.rail-list button.done .n,.rail-list button.active .n{background:var(--sc);color:#fff}
+.rail-list button.quiz .n{border-style:dashed}
+
+/* stage */
+.stage{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.stage-head{padding:1.25rem 1.5rem 1rem;position:relative}
+.stage-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--accent)}
+.step-meta{font-size:.86rem;color:var(--accent);font-weight:800}
+.stage-head h2{font-size:clamp(1.3rem,2.2vw,1.65rem);font-weight:900;letter-spacing:-.015em;margin:.2rem 0 .35rem}
+.stage-head .lead-txt{color:var(--muted);margin:0;max-width:72ch}
+.thin{height:7px;background:var(--grid);border-radius:7px;margin-top:1rem;overflow:hidden}
+.thin>div{height:100%;background:linear-gradient(90deg,var(--ocean),var(--lilac),var(--berry),var(--tang),var(--gold),var(--grass));background-size:900px 100%;transition:width .45s ease;border-radius:7px}
+.vis{min-height:360px;padding:1.25rem 1.5rem;background:radial-gradient(1200px 260px at 20% 0%,var(--accent-soft),transparent 70%),#fafcfe;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative}
+.explain{font-size:1rem;max-width:70ch}
+.explain p{margin-bottom:.8rem}
+.explain ul{padding-left:1.1rem}
+.explain li{margin-bottom:.35rem}
+.keycard{border-radius:16px;padding:.9rem 1rem;margin-bottom:1rem;background:var(--accent-soft);position:relative;overflow:hidden}
+.keycard::after{content:"";position:absolute;right:-20px;top:-20px;width:70px;height:70px;border-radius:50%;background:var(--accent);opacity:.12}
+.keycard .kt{font-size:.82rem;font-weight:800;color:var(--accent);margin-bottom:.2rem}
+.keycard p{margin:0;font-weight:700}
+.tool-box{border:2px dashed #c9d8e8;border-radius:14px;padding:.85rem 1rem;background:#fff}
+.tool-box .kt{font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:.45rem}
+.term{display:inline-block;font-family:'Roboto Mono',monospace;font-size:.74rem;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:.12rem .45rem;margin:0 .25rem .35rem 0}
+.stage-foot{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1.5rem;border-top:1px solid var(--line);background:#fff;gap:.5rem}
+.btn{border-radius:12px}
+.btn-brand{--bs-btn-color:#fff;--bs-btn-bg:var(--ocean);--bs-btn-border-color:var(--ocean);--bs-btn-hover-color:#fff;--bs-btn-hover-bg:#0958a8;--bs-btn-hover-border-color:#0958a8;--bs-btn-active-bg:#084b8f;--bs-btn-active-color:#fff;--bs-btn-disabled-bg:#8db8e6;--bs-btn-disabled-border-color:#8db8e6;font-weight:800}
+.btn-warm{--bs-btn-color:#fff;--bs-btn-bg:var(--tang);--bs-btn-border-color:var(--tang);--bs-btn-hover-color:#fff;--bs-btn-hover-bg:#d95f10;--bs-btn-hover-border-color:#d95f10;--bs-btn-disabled-bg:#f7b78d;--bs-btn-disabled-border-color:#f7b78d;font-weight:800}
+.btn-ghost{--bs-btn-color:var(--ink);--bs-btn-border-color:var(--line);--bs-btn-hover-bg:var(--bg);--bs-btn-hover-border-color:#bcd0e6;--bs-btn-hover-color:var(--ink);background:#fff;font-weight:700}
+.btn-seg{--bs-btn-color:var(--muted);--bs-btn-border-color:var(--line);--bs-btn-hover-bg:var(--bg);--bs-btn-hover-color:var(--ink);background:#fff;font-weight:700}
+.btn-seg.active{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}
+.kbd-hint{font-size:.8rem;color:var(--muted)}
+
+/* vis parts */
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:1rem}
+.panel-title{display:flex;align-items:center;gap:.5rem;font-weight:800;font-size:.92rem;margin-bottom:.75rem}
+.pill{display:inline-block;font-size:.76rem;font-weight:700;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:.1rem .6rem;color:var(--muted)}
+.tag{display:inline-block;font-size:.74rem;font-weight:800;border-radius:7px;padding:.08rem .45rem;white-space:nowrap}
+.t-ocean{background:var(--ocean-soft);color:var(--ocean)} .t-tang{background:var(--tang-soft);color:#c4560d} .t-grass{background:var(--grass-soft);color:#17803f} .t-berry{background:var(--berry-soft);color:var(--berry)} .t-lilac{background:var(--lilac-soft);color:#5a40e0} .t-gold{background:var(--gold-soft);color:var(--gold-ink)} .t-grey{background:var(--grid);color:var(--muted)}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:.55rem .75rem}
+[class^="col"]>.stat{height:100%}
+.stat .l{font-size:.74rem;color:var(--muted);font-weight:700}
+.stat .v{font-family:'Roboto Mono',monospace;font-size:1.2rem;font-weight:600}
+.verdict{border-radius:12px;padding:.65rem .85rem;font-weight:700;font-size:.9rem}
+.v-good{background:var(--grass-soft);color:#146d36} .v-bad{background:var(--berry-soft);color:#a8214f} .v-warn{background:var(--gold-soft);color:var(--gold-ink)} .v-info{background:var(--ocean-soft);color:#08539e}
+.dtable{width:100%;font-size:.8rem;border-collapse:separate;border-spacing:0}
+.dtable th{font-weight:800;color:var(--muted);font-size:.74rem;padding:.35rem .5rem;border-bottom:2px solid var(--line);white-space:nowrap}
+.dtable td{padding:.36rem .5rem;border-bottom:1px solid var(--grid);white-space:nowrap;font-family:'Roboto Mono',monospace;font-size:.75rem}
+.dtable tr.hl td{background:var(--gold-soft)}
+.dtable tr.bad td{background:var(--berry-soft)}
+.dtable tr.good td{background:var(--grass-soft)}
+.dtable tr.sel td{background:var(--ocean-soft)}
+.hcells{display:grid;grid-template-columns:repeat(24,1fr);gap:3px}
+.hcells span{height:30px;border-radius:5px;background:var(--grid)}
+.hlabels{display:grid;grid-template-columns:repeat(24,1fr);font-size:.62rem;color:var(--muted);text-align:center}
+.node{border-radius:12px;color:#fff;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:72px;height:66px;font-size:.66rem;font-weight:800;margin:4px;position:relative;line-height:1.15;text-align:center}
+.node i{font-size:1.2rem}
+.blk{width:16px;height:16px;border-radius:4px;display:inline-block;margin:2px}
+.bucket-box{border:3px solid var(--grass);border-radius:18px;background:#fff;padding:.8rem;position:relative}
+.cluster-box{border:3px dashed var(--ocean);border-radius:18px;padding:.6rem;min-height:120px;text-align:center}
+.crumbs{font-family:'Roboto Mono',monospace;font-size:.8rem}
+.crumbs a{color:var(--ocean);cursor:pointer;text-decoration:none;font-weight:600}
+.fs-row{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem;border-radius:10px;cursor:pointer;font-size:.85rem}
+.fs-row:hover{background:var(--bg)}
+.fs-row.sel{background:var(--ocean-soft)}
+.map-row td{font-family:'Nunito',sans-serif;font-size:.85rem;white-space:normal}
+.map-row td.on{background:var(--pcs);font-weight:800}
+.phase{height:44px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:800;overflow:hidden;white-space:nowrap;text-align:center;line-height:1.1}
+.meter{height:16px;background:var(--grid);border-radius:9px;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:9px;transition:width .35s,background .35s}
+.feed{height:150px;overflow:hidden;font-family:'Roboto Mono',monospace;font-size:.72rem}
+.feed div{padding:.2rem 0;border-bottom:1px dashed var(--grid)}
+.stepcard{border:2px solid var(--line);border-radius:14px;padding:.6rem .75rem;background:#fff;margin-bottom:.5rem;display:flex;gap:.7rem;align-items:center}
+.stepcard .si{flex:0 0 36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:var(--grid);color:var(--muted)}
+.stepcard.run{border-color:var(--ocean)} .stepcard.run .si{background:var(--ocean);color:#fff}
+.stepcard.ok{border-color:var(--grass)} .stepcard.ok .si{background:var(--grass);color:#fff}
+.stepcard.fail{border-color:var(--berry)} .stepcard.fail .si{background:var(--berry);color:#fff}
+.stepcard.skip{opacity:.5} .stepcard.warn{border-color:var(--gold)} .stepcard.warn .si{background:var(--gold);color:#fff}
+.layer{border-radius:16px;padding:.75rem 1rem;color:#fff;font-weight:800;cursor:pointer;margin:0 auto 8px;text-align:center;transition:transform .2s,box-shadow .2s}
+.layer:hover{transform:scale(1.02)}
+.layer.active{box-shadow:0 0 0 4px rgba(19,35,58,.18)}
+.ynode{border:2px solid var(--line);border-radius:14px;background:#fff;padding:.55rem;margin-bottom:8px}
+.ybar{display:flex;height:26px;border-radius:7px;overflow:hidden;background:repeating-linear-gradient(45deg,#f1f4f8 0 6px,#e6ebf2 6px 12px)}
+.ybar>div{height:100%;border-right:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:.62rem;color:#fff;font-weight:800;overflow:hidden}
+.ui-mock{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.ui-top{background:#f6f8fb;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:.25rem;padding:.35rem .6rem;flex-wrap:wrap}
+.ui-top .logo{font-weight:900;color:var(--tang);margin-right:.6rem}
+.ui-tab{border:0;background:transparent;padding:.25rem .6rem;border-radius:8px;font-size:.8rem;font-weight:700;color:var(--muted)}
+.ui-tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 0 var(--line)}
+.dag{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dag .st{border:2px solid var(--ocean);border-radius:12px;padding:.45rem .7rem;font-size:.78rem;font-weight:800;cursor:pointer;background:#fff}
+.dag .st.sel{background:var(--ocean);color:#fff}
+.dag .arr{font-size:.7rem;color:var(--muted);text-align:center;line-height:1.1}
+.qmet td.bad{background:var(--berry-soft);color:#a8214f;font-weight:600}
+.qmet tr{cursor:pointer}
+.qmet tr:hover td{outline:1px solid #cfdbe8}
+.files{display:flex;flex-wrap:wrap;gap:2px;align-content:flex-start;height:170px;overflow:hidden}
+.files i{display:block;border-radius:2px}
+.quiz-q{background:#fff;border:1px solid var(--line);border-radius:16px;padding:1rem 1.1rem;margin-bottom:1rem}
+.quiz-q .qt{font-weight:800;margin-bottom:.6rem}
+.quiz-opt{display:block;width:100%;text-align:left;background:var(--bg);border:2px solid transparent;border-radius:12px;padding:.5rem .75rem;margin-bottom:.4rem;font-size:.93rem;color:var(--ink);font-weight:600}
+.quiz-opt:hover{border-color:#c9d8e8}
+.quiz-opt.right{border-color:var(--grass);background:var(--grass-soft)}
+.quiz-opt.wrong{border-color:var(--berry);background:var(--berry-soft)}
+.quiz-ex{font-size:.88rem;color:var(--muted);display:none;margin-top:.3rem}
+input[type=range]{width:100%;accent-color:var(--ocean)}
+.badge-dark{font-family:'Roboto Mono',monospace;font-weight:600;background:var(--ink);color:#fff;border-radius:8px;padding:.12rem .55rem;font-size:.82rem}
+.form-select,.form-control{font-size:.86rem;border-radius:10px}
+.small-note{font-size:.76rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="cloud" style="width:180px;height:46px;left:52%;top:30px"></div>
+  <div class="cloud" style="width:120px;height:32px;left:68%;top:150px;opacity:.6"></div>
+  <div class="cloud" style="width:220px;height:54px;left:-40px;top:220px;opacity:.5"></div>
+  <div class="hero-cluster d-none d-lg-block text-center">
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="heroNodes"></div>
+    <div class="hc-meter"><span id="heroState" class="me-2" style="color:#5b6b80">STARTING</span><span id="heroCost">$0.00</span></div>
+  </div>
+  <div class="container-xl py-4 py-md-5">
+    <span class="crumb"><i class="bi bi-cloud-fill"></i> Big Data Analytics lab / Cloud-Based Big Data Solutions</span>
+    <h1>Big data in the cloud, without the surprise bill</h1>
+    <p class="goal">Build a transient-cluster workflow against object storage, cost it before running it, then monitor Spark resources and fix the three bottlenecks the UI exposes. This page explains the ideas with pictures and live experiments; the commands come later in the lab simulator.</p>
+    <div class="d-flex align-items-center gap-2 mt-3 flex-wrap"><span class="small fw-bold text-muted">Show me the terms for</span><div class="prov-switch" id="provHero"><button data-p="aws">AWS EMR</button><button data-p="azure">Azure HDInsight</button></div></div>
+    <div class="row g-3 mt-2" id="lessonCards" style="max-width:860px"></div>
+  </div>
+</header>
+
+<main class="container-xl py-4">
+  <div class="row g-4">
+    <aside class="col-lg-3">
+      <div class="rail sticky-lg-top" style="top:16px">
+        <div class="rail-head" id="railHead"></div>
+        <ol class="rail-list" id="rail"></ol>
+      </div>
+    </aside>
+    <section class="col-lg-9">
+      <article class="stage" id="stage">
+        <div class="stage-head">
+          <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+            <div class="step-meta" id="stepMeta"></div>
+            <div class="d-flex gap-2 align-items-center"><div class="prov-switch" id="provStage"><button data-p="aws">AWS</button><button data-p="azure">Azure</button></div><button class="btn btn-ghost btn-sm" id="replay" title="Restart this step"><i class="bi bi-arrow-counterclockwise"></i> Replay</button></div>
+          </div>
+          <h2 id="stepTitle"></h2>
+          <p class="lead-txt" id="stepLead"></p>
+          <div class="thin"><div id="prog"></div></div>
+        </div>
+        <div class="vis" id="vis"></div>
+        <div class="row g-4 p-3 p-md-4">
+          <div class="col-md-8"><div class="explain" id="explain"></div></div>
+          <div class="col-md-4" id="side"></div>
+        </div>
+        <div class="stage-foot">
+          <button class="btn btn-ghost" id="prev"><i class="bi bi-arrow-left"></i> Previous</button>
+          <span class="kbd-hint d-none d-md-inline">Use ← and → keys to move between steps</span>
+          <button class="btn btn-brand" id="next">Next <i class="bi bi-arrow-right"></i></button>
+        </div>
+      </article>
+    </section>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+/* =========================================================
+   Helpers
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const usd = (n, d = 2) => '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pad = n => String(n).padStart(2, '0');
+const hm = m => `${pad(Math.floor(m / 60) % 24)}:${pad(Math.floor(m % 60))}`;
+const K = { ocean:'#0b6bcb', tang:'#f2711c', grass:'#23a55a', berry:'#d6336c', lilac:'#7b61ff', gold:'#e0a100', ink:'#13233a', muted:'#5b6b80', grey:'#b5c3d3' };
+const SOFT = { ocean:'#e2effc', tang:'#feeee2', grass:'#e1f5e8', berry:'#fbe5ee', lilac:'#efecff', gold:'#fdf3d5', ink:'#e9f0f7' };
+const HUES = ['ocean', 'lilac', 'berry', 'tang', 'gold', 'grass'];
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+let charts = [], timers = [];
+function cleanup(){ gsap.globalTimeline.clear(); charts.forEach(c => c.destroy()); charts = []; timers.forEach(t => { clearInterval(t); clearTimeout(t); }); timers = []; }
+const every = (fn, ms) => { const id = setInterval(fn, ms); timers.push(id); return id; };
+const later = (fn, ms) => { const id = setTimeout(fn, ms); timers.push(id); return id; };
+const mkChart = (canvas, cfg) => { const c = new Chart(canvas, cfg); charts.push(c); return c; };
+const killChart = c => { if (!c) return; c.destroy(); charts = charts.filter(x => x !== c); };
+function feed(box, html, max = 8){ const d = document.createElement('div'); d.innerHTML = html; box.prepend(d); gsap.from(d, { opacity: 0, x: -10, duration: .3 }); while (box.children.length > max) box.lastElementChild.remove(); }
+const seg = (id, el) => $$(`#${id} button`, el);
+function segBind(id, el, fn){ seg(id, el).forEach(b => b.onclick = () => { seg(id, el).forEach(x => x.classList.toggle('active', x === b)); fn(b.dataset.v); }); }
+Chart.defaults.font.family = "'Nunito', system-ui, sans-serif";
+Chart.defaults.font.weight = 600;
+Chart.defaults.color = K.muted;
+Chart.defaults.borderColor = '#e9f0f7';
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+
+/* =========================================================
+   Provider terms and example prices
+   (prices are illustrative round numbers for teaching; always
+    check the official pricing calculator for your region)
+   ========================================================= */
+let PROV = 'aws';
+const TERMS = {
+  aws: { svc: 'Amazon EMR', short: 'EMR', store: 'Amazon S3', storeShort: 'S3', bucket: 'bucket', uri: 's3://hospital-lake', master: 'primary node', masters: '1 primary node', core: 'core nodes', task: 'task nodes', role: 'IAM role (EC2 instance profile)', mon: 'Amazon CloudWatch', cost: 'AWS Cost Explorer and AWS Budgets', boot: 'bootstrap actions', submit: 'EMR steps', scale: 'EMR managed scaling', autoterm: 'auto-termination after an idle timeout', idle: 'the IsIdle metric', spot: 'Spot Instances', console: 'EMR console', states: ['STARTING', 'BOOTSTRAPPING', 'RUNNING', 'WAITING', 'TERMINATED'], fail: ['CONTINUE', 'CANCEL_AND_WAIT', 'TERMINATE_CLUSTER'], color: 'tang' },
+  azure: { svc: 'Azure HDInsight', short: 'HDInsight', store: 'Azure Data Lake Storage Gen2', storeShort: 'ADLS Gen2', bucket: 'container', uri: 'abfss://lake@hospitalstore.dfs.core.windows.net', master: 'head node', masters: '2 head nodes', core: 'worker nodes', task: 'extra worker nodes', role: 'managed identity', mon: 'Azure Monitor', cost: 'Azure Cost Management and Budgets', boot: 'script actions', submit: 'jobs submitted through Livy or Azure Data Factory', scale: 'HDInsight autoscale', autoterm: 'deleting the cluster when the job ends (for example an on-demand cluster created by Azure Data Factory)', idle: 'a “no running YARN applications” metric', spot: 'spot nodes (not offered for standard HDInsight clusters)', console: 'Azure portal', states: ['Provisioning', 'Running script actions', 'Running', 'Idle', 'Deleted'], fail: ['Run next job anyway', 'Stop, keep cluster', 'Stop and delete cluster'], color: 'ocean' }};
+const PRICE = {
+  aws: { sizes: [{ n: 'm5.xlarge', c: 4, m: 16, r: .24 }, { n: 'm5.2xlarge', c: 8, m: 32, r: .48 }, { n: 'r5.2xlarge', c: 8, m: 64, r: .63 }], head: { n: 'm5.xlarge', r: .24, count: 1 }, store: .023, spot: .48 },
+  azure: { sizes: [{ n: 'D3 v2', c: 4, m: 14, r: .34 }, { n: 'D4 v2', c: 8, m: 28, r: .68 }, { n: 'D13 v2', c: 8, m: 56, r: .86 }], head: { n: 'D3 v2', r: .34, count: 2 }, store: .021, spot: null }};
+const T = () => TERMS[PROV], P = () => PRICE[PROV];
+const v = x => typeof x === 'function' ? x(T()) : x;
+const priceNote = () => `<div class="small-note mt-2"><i class="bi bi-info-circle"></i> Example hourly rates per node, including the ${T().short} service fee. Real prices change and differ by region; check the official pricing calculator.</div>`;
+
+/* =========================================================
+   LESSON 1 · Deploying big data solutions on EMR / HDInsight
+   ========================================================= */
+const L1 = [
+{
+  short: 'Why transient clusters?', title: 'Pay for the cluster only while it works',
+  lead: 'An always-on cluster bills you 24 hours a day, even when it sits idle. A transient cluster exists only while there is work.',
+  html: t => `<p>Our hospital’s nightly Spark job takes a few hours. On an always-on cluster the machines keep running (and billing) for the other 20 hours. In the cloud you can instead <b>create a cluster, run the job, and delete the cluster</b>: a <b>transient</b> cluster.</p>
+  <p>Drag the sliders. The grey cells are hours you pay for while nothing runs. The fewer hours of real work per day, the bigger the saving.</p>
+  <p>This only works if your <b>data does not live on the cluster</b>, which is the next step. Long-running clusters still make sense for teams running interactive queries all day.</p>`,
+  key: 'In the cloud, idle time costs money. Create clusters for the work, then delete them.',
+  terms: t => ['transient cluster', 'long-running cluster', 'pay per use', t.svc],
+  vis(el){
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-4"><div class="panel h-100">
+        <label class="small fw-bold">Hours of real work per day: <span class="badge-dark" id="hv">3</span></label><input type="range" min="1" max="16" value="3" id="hw">
+        <label class="small fw-bold mt-2">Cluster size: <span class="badge-dark" id="nv">10</span> nodes</label><input type="range" min="3" max="30" value="10" id="nn">
+        <div class="row g-2 mt-2"><div class="col-6"><div class="stat"><div class="l">Always-on / month</div><div class="v" id="ao" style="color:${K.berry}"></div></div></div><div class="col-6"><div class="stat"><div class="l">Transient / month</div><div class="v" id="tr" style="color:${K.grass}"></div></div></div></div>
+        <div class="stat mt-2"><div class="l">Saving</div><div class="v" id="sv"></div></div>${priceNote()}</div></div>
+      <div class="col-lg-8"><div class="panel h-100"><div class="panel-title"><i class="bi bi-calendar-day" style="color:${K.ocean}"></i> One day of the cluster</div>
+        <div class="small fw-bold mb-1">Always-on cluster</div><div class="hcells" id="r1">${'<span></span>'.repeat(24)}</div>
+        <div class="small fw-bold mb-1 mt-3">Transient cluster</div><div class="hcells" id="r2">${'<span></span>'.repeat(24)}</div>
+        <div class="hlabels mt-1">${Array.from({ length: 24 }, (_, i) => `<span>${i % 3 ? '' : pad(i)}</span>`).join('')}</div>
+        <div class="d-flex gap-3 small mt-3 flex-wrap"><span><span class="blk" style="background:${K.ocean}"></span>working, paid</span><span><span class="blk" style="background:#c7d2df"></span>idle, still paid</span><span><span class="blk" style="background:${K.gold}"></span>start-up, paid</span><span><span class="blk" style="background:var(--grid)"></span>no cluster, free</span></div>
+        <div style="height:120px" class="mt-3"><canvas id="cv"></canvas></div></div></div></div>`;
+    const ch = mkChart($('#cv', el), { type: 'bar', data: { labels: ['Always-on', 'Transient'], datasets: [{ data: [0, 0], backgroundColor: [K.berry, K.grass], borderRadius: 8 }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { callback: x => '$' + fmt(x) } } } } });
+    let first = true;
+    const upd = () => {
+      const h = +$('#hw', el).value, n = +$('#nn', el).value, rate = P().sizes[1].r; $('#hv', el).textContent = h; $('#nv', el).textContent = n;
+      const work = i => ((i - 1 + 24) % 24) < h;
+      $$('#r1 span', el).forEach((s, i) => s.style.background = work(i) ? K.ocean : '#c7d2df');
+      $$('#r2 span', el).forEach((s, i) => s.style.background = work(i) ? K.ocean : i === 0 ? K.gold : 'var(--grid)');
+      if (first) { gsap.from($$('.hcells span', el), { scaleY: 0, transformOrigin: '50% 100%', stagger: .01, duration: .3 }); first = false; }
+      const ao = n * rate * 24 * 30, tr = n * rate * (h + .25) * 30;
+      $('#ao', el).textContent = usd(ao, 0); $('#tr', el).textContent = usd(tr, 0); $('#sv', el).textContent = `${usd(ao - tr, 0)} (${Math.round((1 - tr / ao) * 100)}%)`;
+      ch.data.datasets[0].data = [ao, tr]; ch.update();
+    };
+    ['hw', 'nn'].forEach(id => $('#' + id, el).oninput = upd); upd();
+  }
+},
+{
+  short: 'Storage ≠ compute', title: 'Keep the data in object storage, not on the cluster',
+  lead: t => `If data lives on the cluster’s own disks (HDFS), deleting the cluster deletes the data. So the data must live in ${t.store}.`,
+  html: t => `<p>Classic Hadoop keeps data on the cluster’s disks in <b>HDFS</b>. That ties data and compute together: you can never switch the cluster off.</p>
+  <p>In the cloud we <b>separate storage from compute</b>. Data lives in <b>${t.store}</b>, a cheap, durable object store that is always there. Clusters read from it and write results back to it, then disappear.</p>
+  <p>Try both designs: press <b>Delete the cluster</b>, then <b>Create a new cluster</b>. HDFS on the cluster is still useful, but only as fast <b>scratch space</b> for temporary data during a job.</p>`,
+  key: t => `Data lives in ${t.storeShort}; clusters are disposable. HDFS is only scratch space.`,
+  terms: t => ['separation of storage and compute', 'HDFS', t.storeShort, t.uri.split('/')[0] + '//'],
+  vis(el){
+    const t = T();
+    el.innerHTML = `<div class="d-flex flex-wrap gap-2 mb-3"><div class="btn-group btn-group-sm" id="md"><button class="btn btn-seg active" data-v="hdfs">Data on cluster disks (HDFS)</button><button class="btn btn-seg" data-v="obj">Data in ${t.storeShort}</button></div>
+        <button class="btn btn-warm btn-sm" id="del"><i class="bi bi-trash3-fill"></i> Delete the cluster</button><button class="btn btn-brand btn-sm" id="mk"><i class="bi bi-plus-circle-fill"></i> Create a new cluster</button></div>
+      <div class="row g-3 align-items-stretch"><div class="col-md-7"><div class="cluster-box h-100" id="cl"><div class="small fw-bold mb-1" style="color:${K.ocean}"><i class="bi bi-hdd-network"></i> ${t.short} cluster</div><div id="nodes"></div></div></div>
+        <div class="col-md-5"><div class="bucket-box h-100" id="bk"><div class="small fw-bold mb-1" style="color:${K.grass}"><i class="bi bi-bucket-fill"></i> ${t.storeShort} ${t.bucket}</div><div class="mono small text-muted mb-2" style="font-size:.7rem">${t.uri}</div><div id="objs"></div></div></div></div>
+      <div id="res" class="mt-3"></div>`;
+    let mode = 'hdfs', alive = true;
+    const blocks = n => Array.from({ length: n }, (_, i) => `<span class="blk dblk" style="background:${[K.lilac, K.berry, K.gold][i % 3]}"></span>`).join('');
+    const draw = () => {
+      $('#nodes', el).innerHTML = alive ? [1, 2, 3, 4].map(i => `<div class="node" style="background:${K.ocean};width:120px;height:auto;padding:.4rem"><i class="bi bi-cpu"></i>node ${i}<div>${mode === 'hdfs' ? blocks(4) : '<span class="small-note" style="color:#cfe3fa">scratch only</span>'}</div></div>`).join('') : `<div class="text-muted small py-4">no cluster: paying nothing</div>`;
+      $('#objs', el).innerHTML = mode === 'obj' ? blocks(16) : '<span class="small-note">empty: the data lives on the cluster</span>';
+      $('#res', el).innerHTML = '';
+    };
+    segBind('md', el, m => { mode = m; alive = true; draw(); gsap.from($$('.dblk', el), { scale: 0, stagger: .02 }); });
+    $('#del', el).onclick = () => {
+      if (!alive) return; const tl = gsap.timeline();
+      if (mode === 'hdfs') tl.to($$('#nodes .dblk', el), { y: 60, opacity: 0, rotate: 90, stagger: .02, duration: .5 });
+      tl.to($$('#nodes .node', el), { scale: 0, opacity: 0, stagger: .08, duration: .35 }).call(() => { alive = false; $('#nodes', el).innerHTML = `<div class="text-muted small py-4">no cluster: paying nothing</div>`;
+        $('#res', el).innerHTML = mode === 'hdfs' ? `<div class="verdict v-bad"><i class="bi bi-x-octagon-fill"></i> The data was on the cluster’s disks, so it is gone with the cluster.</div>` : `<div class="verdict v-good"><i class="bi bi-check-circle-fill"></i> Cluster gone, cost stopped, and every file is still safe in ${t.storeShort}.</div>`; gsap.from('#res > *', { y: 8, opacity: 0 }); });
+    };
+    $('#mk', el).onclick = () => {
+      if (alive) return; alive = true; draw();
+      gsap.from($$('#nodes .node', el), { scale: 0, stagger: .08, duration: .35, ease: 'back.out(2)' });
+      $('#res', el).innerHTML = mode === 'hdfs' ? `<div class="verdict v-bad"><i class="bi bi-hdd"></i> New cluster, empty disks. You would have to reload everything from somewhere else.</div>` : `<div class="verdict v-good"><i class="bi bi-arrow-repeat"></i> New cluster reads the same data straight from ${t.storeShort}. Nothing to copy.</div>`;
+      if (mode === 'obj') gsap.fromTo('#bk', { boxShadow: '0 0 0 0 rgba(35,165,90,.6)' }, { boxShadow: '0 0 0 14px rgba(35,165,90,0)', duration: .8, repeat: 1 });
+    };
+    draw();
+  }
+},
+{
+  short: 'Object storage layout', title: t => `Organise the data lake in ${t.storeShort}`,
+  lead: 'Object storage looks like folders, but it is really a flat list of keys. A clear, partitioned layout makes jobs fast and cheap.',
+  html: t => `<p>A ${t.bucket} holds <b>objects</b>, each with a <b>key</b> such as <code>raw/events/date=2026-10-20/part-0001.json.gz</code>. The slashes only look like folders; they are part of the name, which is why tools call them <b>prefixes</b>.</p>
+  <p>Click through the layout. A common pattern for a data lake:</p>
+  <ul><li><b>raw/</b>: data exactly as it arrived, never edited.</li><li><b>curated/</b>: cleaned, columnar files (Parquet) ready for analysis.</li><li><b>results/</b>: outputs that dashboards and reports read.</li><li><b>logs/</b>: cluster and Spark logs, kept after the cluster is gone.</li></ul>
+  <p>Partition folders like <code>date=…</code> let Spark read only the days it needs. Old raw data can move to cheaper <b>storage tiers</b> automatically with lifecycle rules.</p>`,
+  key: 'Keys with prefixes, not real folders. Use raw / curated / results / logs, and partition by date.',
+  terms: t => [t.bucket, 'object key', 'prefix', 'partition (date=…)', 'Parquet', 'lifecycle rule', 'storage tier'],
+  vis(el){
+    const t = T();
+    const files = (n, ext, mb) => Object.fromEntries(Array.from({ length: n }, (_, i) => [`part-${pad(i)}00.${ext}`, mb + (i * 7) % 20]));
+    const FS = { 'raw/': { 'events/': { 'date=2026-10-19/': files(4, 'json.gz', 180), 'date=2026-10-20/': files(4, 'json.gz', 175), 'date=2026-10-21/': files(4, 'json.gz', 190) } }, 'curated/': { 'patients/': files(6, 'parquet', 128), 'events/': { 'date=2026-10-20/': files(3, 'parquet', 120) } }, 'results/': { 'daily_summary/': files(1, 'parquet', 2) }, 'logs/': { [`${t.short.toLowerCase()}/`]: { 'cluster-2026-10-21/': files(3, 'log.gz', 1) } } };
+    const size = o => typeof o === 'number' ? o : Object.values(o).reduce((a, x) => a + size(x), 0);
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-8"><div class="panel h-100"><div class="crumbs mb-2" id="cr"></div><div id="ls"></div></div></div>
+      <div class="col-lg-4"><div class="panel h-100"><div class="small fw-bold text-muted">Selected object’s full key</div><div class="mono small mb-3" id="key" style="word-break:break-all">click a file</div>
+        <div class="stat mb-2"><div class="l">Total in this ${t.bucket}</div><div class="v" id="tot"></div></div><div class="stat mb-2"><div class="l">Storage cost / month (hot tier)</div><div class="v" id="cst"></div></div>
+        <div class="small fw-bold mt-2">Storage tiers (example)</div><div class="d-flex flex-column gap-1 mt-1"><span class="tag t-tang">hot · frequent reads</span><span class="tag t-ocean">cool · rarely read, cheaper</span><span class="tag t-lilac">archive · hours to restore, cheapest</span></div></div></div></div>`;
+    const tot = size(FS); $('#tot', el).textContent = (tot / 1024).toFixed(1) + ' GB'; $('#cst', el).textContent = usd(tot / 1024 * P().store, 2);
+    const nav = path => {
+      let node = FS; path.forEach(p => node = node[p]);
+      $('#cr', el).innerHTML = [`<a data-i="0">${t.uri}/</a>`, ...path.map((p, i) => `<a data-i="${i + 1}">${p}</a>`)].join('');
+      $$('#cr a', el).forEach(a => a.onclick = () => nav(path.slice(0, +a.dataset.i)));
+      $('#ls', el).innerHTML = Object.entries(node).map(([k, x]) => typeof x === 'number' ? `<div class="fs-row" data-k="${k}"><i class="bi bi-file-earmark-binary" style="color:${K.lilac}"></i><span class="mono flex-grow-1">${k}</span><span class="mono small text-muted">${x} MB</span></div>` : `<div class="fs-row" data-d="${k}"><i class="bi bi-folder-fill" style="color:${k.startsWith('date=') ? K.gold : K.ocean}"></i><span class="mono flex-grow-1 fw-bold">${k}</span><span class="mono small text-muted">${(size(x) / 1024).toFixed(2)} GB</span></div>`).join('');
+      $$('#ls [data-d]', el).forEach(r => r.onclick = () => nav([...path, r.dataset.d]));
+      $$('#ls [data-k]', el).forEach(r => r.onclick = () => { $$('#ls .fs-row', el).forEach(x => x.classList.remove('sel')); r.classList.add('sel'); $('#key', el).innerHTML = `<span style="color:${K.muted}">${t.uri}/</span><b>${path.join('')}${r.dataset.k}</b>`; gsap.from('#key', { opacity: 0 }); });
+      gsap.from($$('#ls .fs-row', el), { opacity: 0, x: -10, stagger: .04, duration: .25 });
+    };
+    nav([]);
+  }
+},
+{
+  short: 'EMR ↔ HDInsight', title: 'Same ideas, different names: EMR and HDInsight',
+  lead: 'Both are managed Hadoop/Spark services. Learn the concepts once; then map the vocabulary.',
+  html: t => `<p>Amazon EMR and Azure HDInsight both give you a ready-made Hadoop/Spark cluster in minutes: you choose machine sizes and counts, and the provider installs and wires up the software.</p>
+  <p>The table maps each concept. Use the switch at the top of this page to choose which vocabulary the rest of the explainer uses. You are now seeing <b>${t.svc}</b> terms.</p>
+  <p>Two differences matter for cost: HDInsight always runs <b>two head nodes</b> for high availability, and EMR has an extra kind of compute-only node (<b>task nodes</b>) that is often run on cheap Spot capacity.</p>`,
+  key: 'Learn the concepts (coordinator, workers, object storage, scaling, shutdown); the names are just labels.',
+  terms: () => ['Amazon EMR', 'Azure HDInsight', 'managed cluster', 'Spark history server'],
+  vis(el){
+    const R = [['Managed Hadoop/Spark service', 'Amazon EMR', 'Azure HDInsight'], ['Object storage for the data', 'Amazon S3 (s3://)', 'ADLS Gen2 (abfss://)'], ['Coordinator node(s)', 'Primary node: 1, or 3 for high availability', '2 head nodes, always'], ['Nodes that store HDFS and run tasks', 'Core nodes', 'Worker nodes'], ['Compute-only nodes', 'Task nodes (often Spot)', 'Not a separate type: add workers'], ['Setup scripts at start-up', 'Bootstrap actions', 'Script actions'], ['Submitting work', 'Steps, spark-submit or Livy', 'Livy, spark-submit or Azure Data Factory'], ['Grow and shrink automatically', 'EMR managed scaling', 'HDInsight autoscale (load or schedule)'], ['Shut down when done', 'Auto-termination idle timeout', 'Delete the cluster, e.g. Data Factory on-demand cluster'], ['Identity used to reach storage', 'IAM role (instance profile)', 'Managed identity'], ['Metrics and alarms', 'Amazon CloudWatch', 'Azure Monitor'], ['Cost tracking', 'Cost Explorer + Budgets, by tags', 'Cost Management + Budgets, by tags']];
+    const ci = PROV === 'aws' ? 1 : 2, col = TERMS[PROV].color;
+    el.innerHTML = `<div class="panel" style="--pcs:${SOFT[col]}"><div class="table-responsive"><table class="dtable"><thead><tr><th>Concept</th><th style="color:${K.tang}">AWS EMR</th><th style="color:${K.ocean}">Azure HDInsight</th></tr></thead><tbody>${R.map(r => `<tr class="map-row">${r.map((c, i) => `<td class="${i === ci ? 'on' : ''}" style="${i === 0 ? 'font-weight:700' : ''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+    gsap.from($$('.map-row', el), { opacity: 0, x: -14, stagger: .05, duration: .3 });
+  }
+},
+{
+  short: 'Design the cluster', title: 'Choose node roles, sizes and counts',
+  lead: 'A cluster is a coordinator plus workers. Pick a machine size and how many of each, and watch capacity and price change.',
+  html: t => `<p>Every ${t.short} cluster has the same three jobs to fill:</p>
+  <ul><li><b>${t.masters}</b> (${t.master}): run the cluster managers (YARN, Spark driver services). Small machines are fine.</li>
+  <li><b>${t.core}</b>: run Spark tasks and hold HDFS scratch data. Losing one mid-job hurts.</li>
+  ${PROV === 'aws' ? '<li><b>Task nodes</b>: run Spark tasks only, no HDFS. Safe to add and remove, so they are perfect for cheap Spot capacity.</li>' : '<li>On HDInsight you simply add more worker nodes; autoscale can add and remove them.</li>'}</ul>
+  <p>Choose memory-heavy machines (more GB per core) for joins and aggregations, general-purpose ones for simple transformations. Watch the hourly price: it is what you will multiply by hours in the cost step.</p>`,
+  key: 'Coordinator small, workers sized for the job. Price per hour = sum of every node’s rate.',
+  terms: t => [t.master, t.core, PROV === 'aws' ? 'task nodes' : 'worker nodes', 'vCPU', 'memory per core', 'instance / VM size'],
+  vis(el){
+    const t = T(), p = P();
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-4"><div class="panel h-100">
+        <label class="small fw-bold">Worker machine size</label><select class="form-select form-select-sm mb-2" id="sz">${p.sizes.map((s, i) => `<option value="${i}" ${i === 1 ? 'selected' : ''}>${s.n} · ${s.c} vCPU · ${s.m} GB</option>`).join('')}</select>
+        <label class="small fw-bold">${t.core}: <span class="badge-dark" id="cv">4</span></label><input type="range" min="1" max="12" value="4" id="cc">
+        ${PROV === 'aws' ? `<label class="small fw-bold mt-2">Task nodes: <span class="badge-dark" id="tv">2</span></label><input type="range" min="0" max="12" value="2" id="tc"><div class="form-check form-switch mt-1"><input class="form-check-input" type="checkbox" id="sp" checked><label class="form-check-label small fw-bold" for="sp">Task nodes on Spot</label></div>` : '<div class="small-note mt-2">HDInsight: workers only; the 2 head nodes are always included.</div>'}
+        ${priceNote()}</div></div>
+      <div class="col-lg-8"><div class="panel h-100"><div id="vis2" class="mb-2"></div><div class="row g-2">${[['Total vCPU (workers)', 'vc'], ['Total memory (workers)', 'mm'], ['Price per hour', 'ph']].map(([l, k]) => `<div class="col-4"><div class="stat"><div class="l">${l}</div><div class="v" id="${k}"></div></div></div>`).join('')}</div></div></div></div>`;
+    const upd = () => {
+      const s = p.sizes[+$('#sz', el).value], c = +$('#cc', el).value, tc = PROV === 'aws' ? +$('#tc', el).value : 0, spot = PROV === 'aws' && $('#sp', el).checked;
+      $('#cv', el).textContent = c; if (PROV === 'aws') $('#tv', el).textContent = tc;
+      const nd = (bg, ic, l, extra = '') => `<div class="node" style="background:${bg}"><i class="bi ${ic}"></i>${l}${extra}</div>`;
+      $('#vis2', el).innerHTML = `<div class="small fw-bold mb-1" style="color:${K.lilac}">${t.master}${p.head.count > 1 ? 's' : ''} · ${p.head.n}</div>${Array.from({ length: p.head.count }, () => nd(K.lilac, 'bi-diagram-3-fill', t.master)).join('')}
+        <div class="small fw-bold mb-1 mt-2" style="color:${K.ocean}">${t.core} · ${s.n}</div>${Array.from({ length: c }, () => nd(K.ocean, 'bi-hdd-stack-fill', 'tasks + HDFS')).join('')}
+        ${tc ? `<div class="small fw-bold mb-1 mt-2" style="color:${K.tang}">task nodes · ${s.n}${spot ? ' · Spot' : ''}</div>${Array.from({ length: tc }, () => nd(spot ? K.tang : '#f5a066', 'bi-lightning-charge-fill', spot ? 'tasks · Spot' : 'tasks')).join('')}` : ''}`;
+      gsap.from($$('#vis2 .node', el), { scale: .6, opacity: 0, stagger: .015, duration: .25 });
+      const w = c + tc; $('#vc', el).textContent = w * s.c; $('#mm', el).textContent = w * s.m + ' GB';
+      $('#ph', el).textContent = usd(p.head.count * p.head.r + c * s.r + tc * s.r * (spot ? p.spot : 1)) + '/h';
+    };
+    $$('select,input', el).forEach(i => { i.oninput = upd; i.onchange = upd; }); upd();
+  }
+},
+{
+  short: 'The transient workflow', title: 'Create, run, write out, delete',
+  lead: 'A transient cluster has a short, predictable life. The last stage, shutting down, is the one people forget.',
+  html: t => `<p>Press <b>Run the workflow</b>. The cluster is created, runs its setup (${t.boot}), runs the Spark jobs that read from and write to ${t.storeShort}, then shuts down.</p>
+  <p>Now switch auto-shutdown <b>off</b> and run again. When the job finishes at 01:30 the cluster just waits. Nobody notices until the morning, and the meter keeps running. On ${t.short} the fix is ${t.autoterm}.</p>
+  <p>The bar is drawn to scale: look how the idle part dwarfs the useful work.</p>`,
+  key: 'The workflow is not finished until the cluster is gone. Always configure automatic shutdown.',
+  terms: t => [...t.states, t.boot, PROV === 'aws' ? 'auto-termination' : 'Data Factory on-demand HDInsight'],
+  vis(el){
+    const t = T(), rate = P().head.count * P().head.r + 6 * P().sizes[1].r;
+    el.innerHTML = `<div class="d-flex flex-wrap gap-2 align-items-center mb-3"><span class="small fw-bold">Automatic shutdown</span><div class="btn-group btn-group-sm" id="at"><button class="btn btn-seg active" data-v="1">On</button><button class="btn btn-seg" data-v="0">Off</button></div><button class="btn btn-brand btn-sm" id="go"><i class="bi bi-play-fill"></i> Run the workflow</button><span class="pill">cluster costs ${usd(rate)}/h</span></div>
+      <div class="panel"><div class="d-flex rounded overflow-hidden" id="bar" style="background:var(--grid)"></div>
+        <div class="row g-2 mt-2"><div class="col-4"><div class="stat"><div class="l">Clock</div><div class="v" id="clk">00:50</div></div></div><div class="col-4"><div class="stat"><div class="l">State</div><div class="v" id="st" style="font-size:1rem">–</div></div></div><div class="col-4"><div class="stat"><div class="l">Bill so far</div><div class="v" id="bill">$0.00</div></div></div></div>
+        <div class="feed mt-2" id="fd" style="height:110px"></div></div>`;
+    $('#go', el).onclick = e => {
+      gsap.globalTimeline.clear(); e.currentTarget.disabled = true;
+      const on = $('#at .active', el).dataset.v === '1';
+      const PH = [[t.states[0], 8, K.gold, 'cluster requested, machines starting'], [t.states[1], 4, K.lilac, `${t.boot} install extra libraries`], [t.states[2] + ' · job 1', 18, K.ocean, `clean ${t.uri}/raw/ → curated/`], [t.states[2] + ' · job 2', 10, K.ocean, 'build results/daily_summary/'], ...(on ? [[t.states[4], 2, K.grass, 'shut down automatically']] : [[t.states[3] + ' (idle)', 480, '#a9b6c6', 'job done… cluster waits for more work'], ['noticed at 09:30', 2, K.berry, 'someone finally deletes it']])];
+      const total = PH.reduce((a, p) => a + p[1], 0);
+      $('#bar', el).innerHTML = PH.map((p, i) => `<div class="phase" id="ph${i}" style="background:${p[2]};width:0;flex:0 0 auto" title="${p[0]}">${p[1] / total > .08 ? p[0] : ''}</div>`).join('');
+      $('#fd', el).innerHTML = '';
+      const tl = gsap.timeline({ onComplete: () => { e.target.disabled = false; $('#go', el).disabled = false; } }); let clock = 50, cost = 0;
+      PH.forEach((p, i) => {
+        const o = { m: 0 };
+        tl.call(() => { $('#st', el).textContent = p[0]; feed($('#fd', el), `<b>${hm(clock)}</b> ${p[0]}: ${p[3]}`); });
+        tl.to('#ph' + i, { width: (p[1] / total * 100) + '%', duration: Math.min(2.4, .5 + p[1] / 60), ease: 'none' });
+        tl.to(o, { m: p[1], duration: Math.min(2.4, .5 + p[1] / 60), ease: 'none', onUpdate: function(){ const m = clock + o.m; $('#clk', el).textContent = hm(m); $('#bill', el).textContent = usd(cost + o.m / 60 * rate); }, onComplete: () => { clock += p[1]; cost += p[1] / 60 * rate; } }, '<');
+      });
+      tl.call(() => { const useful = 40 / 60 * rate; feed($('#fd', el), on ? `<span style="color:${K.grass}"><b>Total ${usd(cost)}</b>: almost all of it useful work.</span>` : `<span style="color:${K.berry}"><b>Total ${usd(cost)}</b>: ${Math.round((1 - useful / cost) * 100)}% paid for idling.</span>`); });
+    };
+  }
+},
+{
+  short: 'Submitting jobs', title: t => PROV === 'aws' ? 'Steps: a queue of jobs with a failure plan' : 'Jobs in a pipeline, with a failure plan',
+  lead: 'The work is a short list of Spark jobs, each reading from and writing to object storage. Decide in advance what happens when one fails.',
+  html: t => `<p>Each job reads an input path and writes an output path in ${t.storeShort}. Job 3 depends on job 2’s output.</p>
+  <p>Tick <b>Make job 2 fail</b> and try each failure action:</p>
+  <ul><li><b>${t.fail[0]}</b>: job 3 runs on missing input and produces an empty or stale report. Dangerous, because it looks like success.</li>
+  <li><b>${t.fail[1]}</b>: later jobs are cancelled and the cluster stays up for debugging, still billing until someone deletes it.</li>
+  <li><b>${t.fail[2]}</b>: later jobs are cancelled and the cluster shuts down. Logs were already written to ${t.storeShort}, so you can still investigate.</li></ul>
+  <p>For unattended nightly runs, the last option plus logs in object storage is usually the safest default.</p>`,
+  key: 'Each job: input path → output path. Choose the failure action up front; ship logs to object storage.',
+  terms: t => [t.submit, ...t.fail, 'log URI'],
+  vis(el){
+    const t = T(), J = [['Clean raw events', 'raw/events/', 'curated/events/'], ['Build daily summary', 'curated/events/', 'results/daily_summary/'], ['Export for dashboards', 'results/daily_summary/', 'results/export/']];
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-4"><div class="panel h-100"><div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" id="f2" checked><label class="form-check-label small fw-bold" for="f2">Make job 2 fail</label></div>
+        <div class="small fw-bold mb-1">When a job fails</div>${t.fail.map((f, i) => `<div class="form-check"><input class="form-check-input" type="radio" name="fa" id="fa${i}" value="${i}" ${i === 2 ? 'checked' : ''}><label class="form-check-label small mono" for="fa${i}">${f}</label></div>`).join('')}
+        <button class="btn btn-brand btn-sm mt-3 w-100" id="go"><i class="bi bi-play-fill"></i> Run the jobs</button></div></div>
+      <div class="col-lg-8"><div class="panel h-100">${J.map((j, i) => `<div class="stepcard" id="j${i}"><span class="si"><i class="bi bi-${i + 1}-circle-fill"></i></span><div class="flex-grow-1"><div class="fw-bold">${j[0]}</div><div class="mono small text-muted" style="font-size:.7rem">${t.uri}/${j[1]} → ${j[2]}</div></div><span class="tag t-grey" id="js${i}">pending</span></div>`).join('')}
+        <div class="d-flex align-items-center gap-2 mt-2"><span class="small fw-bold">Cluster:</span><span class="tag t-ocean" id="cs">${t.states[2]}</span></div><div class="mt-2" id="out"></div></div></div></div>`;
+    const set = (i, cls, tag, tcls) => { $('#j' + i, el).className = 'stepcard ' + cls; $('#js' + i, el).className = 'tag ' + tcls; $('#js' + i, el).textContent = tag; gsap.fromTo('#j' + i, { scale: 1.03 }, { scale: 1, duration: .25 }); };
+    $('#go', el).onclick = () => {
+      gsap.globalTimeline.clear(); [0, 1, 2].forEach(i => set(i, '', 'pending', 't-grey')); $('#out', el).innerHTML = ''; $('#cs', el).className = 'tag t-ocean'; $('#cs', el).textContent = t.states[2];
+      const fail = $('#f2', el).checked, fa = +$('input[name=fa]:checked', el).value, tl = gsap.timeline();
+      tl.call(() => set(0, 'run', 'running', 't-ocean')).to({}, { duration: .9 }).call(() => set(0, 'ok', 'completed', 't-grass'));
+      tl.call(() => set(1, 'run', 'running', 't-ocean')).to({}, { duration: .9 }).call(() => set(1, fail ? 'fail' : 'ok', fail ? 'failed' : 'completed', fail ? 't-berry' : 't-grass'));
+      if (!fail || fa === 0) tl.call(() => set(2, 'run', 'running', 't-ocean')).to({}, { duration: .9 }).call(() => set(2, fail ? 'warn' : 'ok', fail ? 'completed?!' : 'completed', fail ? 't-gold' : 't-grass'));
+      else tl.call(() => set(2, 'skip', 'cancelled', 't-grey'));
+      tl.call(() => {
+        let msg, cls, st;
+        if (!fail) { msg = 'All jobs succeeded. With auto-shutdown the cluster now terminates.'; cls = 'v-good'; st = t.states[4]; }
+        else if (fa === 0) { msg = 'Job 3 “succeeded” on missing input: the dashboard now shows an empty or stale report, and nobody is warned.'; cls = 'v-bad'; st = t.states[4]; }
+        else if (fa === 1) { msg = 'Stopped safely, but the cluster is still up and billing while it waits for someone to debug it.'; cls = 'v-warn'; st = t.states[3] + ' (billing)'; }
+        else { msg = `Stopped safely and the cluster shut down. Logs are in ${t.uri}/logs/ for debugging.`; cls = 'v-good'; st = t.states[4]; }
+        $('#cs', el).textContent = st; $('#cs', el).className = 'tag ' + (st.includes('billing') ? 't-gold' : 't-grass');
+        $('#out', el).innerHTML = `<div class="verdict ${cls}">${msg}</div>`; gsap.from('#out > *', { y: 8, opacity: 0 });
+      });
+    };
+  }
+},
+{
+  short: 'Cost it first', title: 'Estimate the cost before you click “Create”',
+  lead: 'Cloud cost is mostly arithmetic: nodes × hourly rate × hours, plus storage. Do it before running, not after the bill.',
+  html: t => `<p>Adjust the design and the schedule. The estimate updates per run, per month and per year, and the chart shows where the money goes.</p>
+  <p>A few things to notice:</p>
+  <ul><li>Worker nodes dominate the bill. Their size and count matter most.</li><li>Every run also pays for <b>start-up time</b> (here about 12 minutes), so many tiny runs can cost more than one bigger one.</li><li>Storage in ${t.storeShort} is cheap compared with compute, which is exactly why we keep data there and switch compute off.</li>${PROV === 'aws' ? '<li>Spot task nodes cut their price roughly in half in this example.</li>' : ''}</ul>
+  <p>Write the estimate down. In the monitoring lesson we compare it with what was actually billed.</p>`,
+  key: 'Cost = Σ(nodes × rate) × (runtime + start-up) × runs + storage. Estimate, then verify against the bill.',
+  terms: t => ['pricing calculator', 'node-hour', 'start-up overhead', 'storage GB-month', t.cost],
+  vis(el){
+    const p = P();
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-5"><div class="panel h-100">
+        <label class="small fw-bold">Worker size</label><select class="form-select form-select-sm mb-2" id="sz">${p.sizes.map((s, i) => `<option value="${i}" ${i === 1 ? 'selected' : ''}>${s.n} (${usd(s.r)}/h)</option>`).join('')}</select>
+        ${[['wc', 'Worker nodes', 1, 20, 6, ''], ...(PROV === 'aws' ? [['tc', 'Spot task nodes', 0, 20, 4, '']] : []), ['rt', 'Runtime per run (min)', 10, 300, 45, ''], ['rn', 'Runs per month', 1, 60, 30, ''], ['tb', 'Data stored (TB)', 1, 50, 5, '']].map(([id, l, a, b, d]) => `<label class="small fw-bold">${l}: <span class="badge-dark" id="${id}v">${d}</span></label><input type="range" min="${a}" max="${b}" value="${d}" id="${id}">`).join('')}
+        ${priceNote()}</div></div>
+      <div class="col-lg-7"><div class="panel h-100"><div class="row g-2 mb-2">${[['Per run', 'pr'], ['Per month', 'pm'], ['Per year', 'py']].map(([l, k]) => `<div class="col-4"><div class="stat"><div class="l">${l}</div><div class="v" id="${k}"></div></div></div>`).join('')}</div>
+        <div class="row align-items-center"><div class="col-7"><div style="height:220px"><canvas id="dn"></canvas></div></div><div class="col-5 small" id="lg"></div></div></div></div></div>`;
+    const dn = mkChart($('#dn', el), { type: 'doughnut', data: { labels: [], datasets: [{ data: [], backgroundColor: [K.lilac, K.ocean, K.tang, K.grass], borderWidth: 2, borderColor: '#fff' }] }, options: { maintainAspectRatio: false, cutout: '58%', plugins: { legend: { display: false } } } });
+    const upd = () => {
+      const g = id => +$('#' + id, el).value; ['wc', 'tc', 'rt', 'rn', 'tb'].forEach(id => { if ($('#' + id, el)) $('#' + id + 'v', el).textContent = g(id); });
+      const s = p.sizes[g('sz')], hrs = (g('rt') + 12) / 60, runs = g('rn'), tc = PROV === 'aws' ? g('tc') : 0;
+      const head = p.head.count * p.head.r * hrs * runs, work = g('wc') * s.r * hrs * runs, task = tc * s.r * p.spot * hrs * runs, store = g('tb') * 1024 * p.store, month = head + work + task + store;
+      $('#pr', el).textContent = usd((head + work + task) / runs); $('#pm', el).textContent = usd(month, 0); $('#py', el).textContent = usd(month * 12, 0);
+      const parts = [[T().master + 's', head, K.lilac], ['workers', work, K.ocean], ...(PROV === 'aws' ? [['Spot task nodes', task, K.tang]] : []), [T().storeShort + ' storage', store, K.grass]];
+      dn.data.labels = parts.map(x => x[0]); dn.data.datasets[0].data = parts.map(x => x[1]); dn.data.datasets[0].backgroundColor = parts.map(x => x[2]); dn.update();
+      $('#lg', el).innerHTML = parts.map(([l, x, c]) => `<div class="d-flex justify-content-between gap-2 py-1 border-bottom"><span><span class="blk" style="background:${c}"></span>${l}</span><span class="mono">${usd(x, 0)}</span></div>`).join('') + '<div class="small-note mt-1">per month</div>';
+    };
+    $$('select,input', el).forEach(i => { i.oninput = upd; i.onchange = upd; }); upd();
+  }
+},
+{
+  short: 'Spot capacity', title: 'Spot capacity: cheap, but it can be taken away',
+  lead: 'Spot machines are spare capacity sold at a deep discount. The provider can reclaim them at short notice, so use them only where losing one is harmless.',
+  html: t => `<p>Run the same job under three designs. Halfway through, the provider reclaims two Spot machines.</p>
+  <ul><li><b>Core on-demand, tasks on Spot</b>: lost task nodes only held running tasks, which Spark simply retries elsewhere. The job finishes a bit later and much cheaper.</li>
+  <li><b>Everything on Spot</b>: lost core nodes held HDFS scratch and shuffle data. Whole stages must be recomputed or the job fails. Saving money ends up costing more.</li>
+  <li><b>Everything on-demand</b>: no surprises, full price.</li></ul>
+  ${PROV === 'azure' ? `<div class="verdict v-info mb-2"><i class="bi bi-info-circle-fill"></i> Standard HDInsight clusters do not offer spot worker nodes, so on Azure the main savings come from autoscale and deleting clusters. The concept still matters if you later use other Spark services.</div>` : ''}`,
+  key: 'Put only replaceable compute (task nodes) on Spot. Keep nodes that hold data on on-demand capacity.',
+  terms: t => [PROV === 'aws' ? 'Spot Instances' : 'spot VMs', 'on-demand', 'reclaim / interruption', 'task retry', 'instance fleets'],
+  vis(el){
+    const p = P(), s = p.sizes[1], spotF = p.spot || .48;
+    const SC = { a: ['Core on-demand, tasks on Spot', 'od', 'spot'], b: ['Everything on Spot', 'spot', 'spot'], c: ['Everything on-demand', 'od', 'od'] };
+    el.innerHTML = `<div class="d-flex flex-wrap gap-2 mb-3"><div class="btn-group btn-group-sm flex-wrap" id="sc">${Object.entries(SC).map(([k, x], i) => `<button class="btn btn-seg ${i ? '' : 'active'}" data-v="${k}">${x[0]}</button>`).join('')}</div><button class="btn btn-warm btn-sm" id="go"><i class="bi bi-play-fill"></i> Run the job</button></div>
+      <div class="row g-3"><div class="col-lg-7"><div class="panel h-100"><div id="nodes"></div><div class="small fw-bold mt-2">Job progress</div><div class="meter mt-1" style="height:20px"><i id="pg" style="width:0;background:${K.ocean}"></i></div><div class="small mt-2" id="ev">&nbsp;</div></div></div>
+        <div class="col-lg-5"><div class="panel h-100"><div class="small fw-bold mb-1">Results so far</div><table class="dtable"><thead><tr><th>design</th><th>time</th><th>cost</th><th>outcome</th></tr></thead><tbody id="rs"></tbody></table></div></div></div>`;
+    let sc = 'a'; const done = {};
+    const draw = () => { const [, core, task] = SC[sc]; $('#nodes', el).innerHTML = `<div class="small fw-bold mb-1">${T().core}</div>${[0, 1, 2, 3].map(i => `<div class="node nd c${i}" style="background:${core === 'spot' ? K.tang : K.ocean}"><i class="bi bi-hdd-stack-fill"></i>${core === 'spot' ? 'Spot' : 'on-demand'}</div>`).join('')}<div class="small fw-bold mb-1 mt-2">task nodes</div>${[0, 1, 2, 3].map(i => `<div class="node nd t${i}" style="background:${task === 'spot' ? K.tang : K.ocean}"><i class="bi bi-lightning-charge-fill"></i>${task === 'spot' ? 'Spot' : 'on-demand'}</div>`).join('')}`; $('#pg', el).style.width = '0'; $('#ev', el).innerHTML = '&nbsp;'; };
+    segBind('sc', el, k => { sc = k; draw(); });
+    $('#go', el).onclick = e => {
+      gsap.globalTimeline.clear(); draw(); e.currentTarget.disabled = true; const [name, core, task] = SC[sc];
+      const victims = core === 'spot' ? ['.c1', '.c2'] : task === 'spot' ? ['.t1', '.t2'] : [];
+      const base = 60, rateOf = (kind, n) => n * s.r * (kind === 'spot' ? spotF : 1);
+      let time = base, outcome = 'finished';
+      if (core === 'spot') { time = base * 1.9; outcome = 'stages recomputed'; } else if (task === 'spot') { time = base * 1.12; outcome = 'tasks retried'; }
+      const cost = (p.head.count * p.head.r + rateOf(core, 4) + rateOf(task, 4)) * time / 60;
+      const tl = gsap.timeline({ onComplete: () => { $('#go', el).disabled = false; } });
+      tl.to('#pg', { width: '50%', duration: 1.2, ease: 'none' });
+      if (victims.length) {
+        tl.call(() => { $('#ev', el).innerHTML = `<span class="tag t-berry"><i class="bi bi-exclamation-triangle-fill"></i> 2-minute warning: 2 Spot machines are being reclaimed</span>`; });
+        victims.forEach(v => tl.to($$(v, el), { backgroundColor: '#aab6c4', scale: .85, duration: .3 }));
+        if (core === 'spot') tl.to('#pg', { width: '22%', duration: .8, backgroundColor: K.berry }).call(() => $('#ev', el).innerHTML = `<span class="tag t-berry">HDFS and shuffle data on lost core nodes are gone: earlier stages rerun</span>`).to('#pg', { width: '100%', duration: 2.4, ease: 'none', backgroundColor: K.ocean });
+        else tl.call(() => $('#ev', el).innerHTML = `<span class="tag t-gold">Running tasks on lost nodes are retried on the others</span>`).to('#pg', { width: '100%', duration: 1.5, ease: 'none' });
+      } else tl.to('#pg', { width: '100%', duration: 1.2, ease: 'none' });
+      tl.call(() => { done[sc] = [name, time, cost, outcome]; $('#rs', el).innerHTML = Object.values(done).map(r => `<tr><td style="font-family:Nunito;white-space:normal">${r[0]}</td><td>${Math.round(r[1])} min</td><td>${usd(r[2])}</td><td style="font-family:Nunito">${r[3]}</td></tr>`).join(''); $('#ev', el).innerHTML = `<span class="tag t-grass">Done in ${Math.round(time)} min for ${usd(cost)}</span>`; });
+    };
+    draw();
+  }
+},
+{
+  short: 'Scaling', title: 'Scale with the workload, not for the peak',
+  lead: 'A job’s need for machines rises and falls. A fixed cluster is either too small at the peak or too big the rest of the time.',
+  html: t => `<p>The shaded area is how many worker nodes the job could use at each minute. Compare three policies:</p>
+  <ul><li><b>Fixed, small</b>: cheap per hour, but the peak queues up and the job runs long.</li><li><b>Fixed, big</b>: fast, but you pay for the peak all the time.</li><li><b>Managed scaling</b> (${t.scale}): nodes follow the demand between a minimum and maximum, with a short delay.</li></ul>
+  <p>The table compares duration and cost. Scaling down only saves money if the nodes are actually removed, which is why it pairs well with task nodes that hold no data.</p>`,
+  key: 'Set a minimum and maximum and let the cluster follow demand. Pay for the peak only during the peak.',
+  terms: t => [t.scale, 'minimum / maximum nodes', 'scale-out', 'scale-in', 'YARN pending containers'],
+  vis(el){
+    const rate = P().sizes[1].r, N = 180;
+    const demand = Array.from({ length: N }, (_, m) => m < 10 ? 2 : m < 60 ? 12 : m < 90 ? 3 : m < 140 ? 7 : 2);
+    const policy = { small: () => demand.map(() => 4), big: () => demand.map(() => 12), managed: () => { const out = []; let cur = 2; for (let m = 0; m < N; m++) { const tgt = demand[Math.max(0, m - 5)], dn = demand.slice(Math.max(0, m - 10), m + 1); const down = Math.max(...dn); cur = tgt > cur ? tgt : Math.max(2, Math.min(cur, down)); out.push(cur); } return out; } };
+    el.innerHTML = `<div class="d-flex flex-wrap gap-2 mb-3"><div class="btn-group btn-group-sm" id="pl"><button class="btn btn-seg active" data-v="small">Fixed · 4 nodes</button><button class="btn btn-seg" data-v="big">Fixed · 12 nodes</button><button class="btn btn-seg" data-v="managed">Managed scaling · 2–12</button></div></div>
+      <div class="row g-3"><div class="col-lg-8"><div class="panel"><div style="height:250px"><canvas id="cv"></canvas></div></div></div>
+        <div class="col-lg-4"><div class="panel h-100"><table class="dtable"><thead><tr><th>policy</th><th>job time</th><th>cost</th></tr></thead><tbody id="tb"></tbody></table><div class="small-note mt-2">Job time grows when demand exceeds nodes (work queues up).</div></div></div></div>`;
+    const stats = nodes => { const deficit = demand.reduce((a, d, i) => a + Math.max(0, d - nodes[i]), 0), extra = deficit / Math.max(...nodes); const nh = nodes.reduce((a, n) => a + n, 0) / 60 + extra / 60 * nodes[N - 1]; return { time: N + extra, cost: nh * rate }; };
+    const rows = { small: 'Fixed · 4', big: 'Fixed · 12', managed: 'Managed 2–12' };
+    $('#tb', el).innerHTML = Object.keys(policy).map(k => { const s = stats(policy[k]()); return `<tr data-k="${k}"><td style="font-family:Nunito">${rows[k]}</td><td>${Math.round(s.time)} min</td><td>${usd(s.cost)}</td></tr>`; }).join('');
+    const ch = mkChart($('#cv', el), { type: 'line', data: { labels: demand.map((_, m) => m + ' min'), datasets: [{ label: 'nodes the job could use', data: demand, borderColor: 'transparent', backgroundColor: 'rgba(123,97,255,.18)', fill: 'origin', pointRadius: 0, stepped: true }, { label: 'nodes running', data: [], borderColor: K.ocean, borderWidth: 3, pointRadius: 0, stepped: true }] }, options: { maintainAspectRatio: false, animation: { duration: 700 }, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, max: 14, title: { display: true, text: 'worker nodes' } }, x: { ticks: { maxTicksLimit: 10 } } } } });
+    const show = k => { ch.data.datasets[1].data = policy[k](); ch.update(); $$('#tb tr', el).forEach(r => r.classList.toggle('sel', r.dataset.k === k)); };
+    segBind('pl', el, show); show('small');
+  }
+},
+{
+  short: 'Access without keys', title: t => `Let the cluster reach ${t.storeShort} without passwords in code`,
+  lead: 'Jobs need permission to read and write the data lake. Never paste access keys into scripts; give the cluster an identity instead.',
+  html: t => `<p><b>The wrong way</b>: an access key and secret pasted into a script. Scripts get copied, shared and pushed to Git. Automated bots scan public code for leaked cloud keys constantly; a leaked key can be abused within minutes.</p>
+  <p><b>The right way</b>: the cluster runs with a <b>${t.role}</b>. The provider hands it short-lived credentials automatically, and the identity’s policy says exactly which paths it may touch. Try the buttons on the right: the role can read curated data and write results, and nothing else.</p>
+  <p>This is least privilege from the security lessons, applied to the cloud: the cluster gets what its job needs, not the keys to the whole account.</p>`,
+  key: t => `Give the cluster a ${t.role} with a narrow policy. No long-lived keys in code, ever.`,
+  terms: t => [t.role, 'least privilege', 'short-lived credentials', 'storage policy', 'secret scanning'],
+  vis(el){
+    const t = T(), A = [['Read curated/patients/', 1], ['Write results/daily_summary/', 1], ['Read raw-pii/', 0], ['Delete the whole ' + t.bucket, 0], ['Create new clusters', 0]];
+    el.innerHTML = `<div class="row g-3"><div class="col-md-6"><div class="panel h-100" style="border:2px solid ${K.berry}"><div class="panel-title" style="color:${K.berry}"><i class="bi bi-x-octagon-fill"></i> Keys pasted in the script</div>
+        <div class="mono small p-2 rounded" style="background:var(--berry-soft)">job.py<br>access_key = "AKIA…EXAMPLE"<br>secret = "wJal…EXAMPLE"</div>
+        <button class="btn btn-warm btn-sm mt-2" id="leak"><i class="bi bi-git"></i> Push to a public repo</button><div class="feed mt-2" id="lf" style="height:110px"></div></div></div>
+      <div class="col-md-6"><div class="panel h-100" style="border:2px solid ${K.grass}"><div class="panel-title" style="color:${K.grass}"><i class="bi bi-person-badge-fill"></i> Cluster runs with a ${t.role}</div>
+        <div class="small mb-2">Policy: <span class="tag t-grass">read curated/*</span> <span class="tag t-grass">write results/*</span> <span class="tag t-grey">everything else: deny</span></div>
+        ${A.map(([a, ok], i) => `<button class="btn btn-ghost btn-sm w-100 text-start mb-1 d-flex justify-content-between" data-i="${i}"><span>${a}</span><span class="res"></span></button>`).join('')}</div></div></div>`;
+    $('#leak', el).onclick = e => { e.currentTarget.disabled = true; const f = $('#lf', el), steps = ['00:00 pushed job.py to GitHub', '00:02 a bot scanning public commits finds the key', '00:04 key used from an unknown IP', '00:06 40 large machines started for crypto-mining', '00:30 your bill is growing every minute']; steps.forEach((s, i) => later(() => feed(f, `<span style="color:${i > 1 ? K.berry : K.ink}">${s}</span>`), i * 700)); };
+    $$('[data-i]', el).forEach(b => b.onclick = () => { const ok = A[+b.dataset.i][1]; b.querySelector('.res').innerHTML = ok ? `<span class="tag t-grass">allowed</span>` : `<span class="tag t-berry">denied</span>`; gsap.from(b.querySelector('.res'), { scale: 1.6 }); });
+  }
+},
+{
+  short: 'Launch it', title: 'Pre-flight check, then launch the whole workflow',
+  lead: 'Put it all together: check the plan, see the estimate, launch, and compare the final bill with the estimate.',
+  html: t => `<p>Before launching, a good habit is a short pre-flight checklist. Press <b>Run pre-flight checks</b>, then <b>Launch</b>.</p>
+  <p>Notice the <b>tags</b>: labels like <code>project=bda-lab</code> and <code>owner=…</code> attached to the cluster. ${t.cost} can then split the bill by project and person, which is how you find who left a cluster running.</p>
+  <p>The final bill lands close to the estimate because we estimated with the same arithmetic: nodes × rate × time. That closes Lesson 1. Lesson 2 is about watching the cluster while it runs and making it faster and cheaper.</p>`,
+  key: 'Checklist → estimate → launch → shut down → compare bill with estimate. Tag everything.',
+  terms: t => ['tags', 'pre-flight checklist', 'budget alert', t.autoterm.split(' (')[0], 'log URI'],
+  vis(el){
+    const t = T(), p = P(), s = p.sizes[1], workers = 6, runMin = 40, startMin = 12;
+    const rate = p.head.count * p.head.r + workers * s.r, est = rate * (runMin + startMin) / 60;
+    const CK = [`Data and code are in ${t.storeShort}, not on the cluster`, `Output path: ${t.uri}/results/`, `Logs path: ${t.uri}/logs/`, `Cluster identity: ${t.role} with a narrow policy`, `Automatic shutdown configured`, 'Tags: project=bda-lab, owner=student01', 'Budget alert set for the lab account', `Estimate written down: ${usd(est)}`];
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-5"><div class="panel h-100"><div class="panel-title"><i class="bi bi-list-check" style="color:${K.ocean}"></i> Pre-flight checklist</div>${CK.map((c, i) => `<div class="d-flex gap-2 align-items-start small py-1 border-bottom ck"><i class="bi bi-circle" style="color:${K.grey};margin-top:.15rem"></i><span>${c}</span></div>`).join('')}
+        <div class="d-flex gap-2 mt-3"><button class="btn btn-ghost btn-sm" id="pf"><i class="bi bi-check2-all"></i> Run pre-flight checks</button><button class="btn btn-brand btn-sm" id="go" disabled><i class="bi bi-rocket-takeoff-fill"></i> Launch</button></div></div></div>
+      <div class="col-lg-7"><div class="panel h-100"><div class="d-flex flex-wrap gap-1 mb-2"><span class="tag t-lilac">${p.head.count} × ${p.head.n} ${t.master}</span><span class="tag t-ocean">${workers} × ${s.n} ${t.core}</span><span class="tag t-gold">project=bda-lab</span><span class="tag t-gold">owner=student01</span></div>
+        <div class="row g-2 mb-2"><div class="col-4"><div class="stat"><div class="l">Estimate</div><div class="v">${usd(est)}</div></div></div><div class="col-4"><div class="stat"><div class="l">Meter</div><div class="v" id="mt">$0.00</div></div></div><div class="col-4"><div class="stat"><div class="l">State</div><div class="v" id="st" style="font-size:.9rem">not started</div></div></div></div>
+        <div class="feed" id="fd" style="height:150px"></div><div id="res" class="mt-2"></div></div></div></div>`;
+    $('#pf', el).onclick = e => { e.currentTarget.disabled = true; const tl = gsap.timeline(); $$('.ck', el).forEach(c => tl.call(() => { const i = c.querySelector('i'); i.className = 'bi bi-check-circle-fill'; i.style.color = K.grass; }).from(c, { x: 8, duration: .15 })); tl.call(() => $('#go', el).disabled = false); };
+    $('#go', el).onclick = e => {
+      e.currentTarget.disabled = true; const f = $('#fd', el), PH = [[t.states[0], startMin - 3], [t.states[1], 3], [t.states[2] + ' · clean', 24], [t.states[2] + ' · summary', 16], [t.states[4], 1]];
+      let c = 0, m = 60; const tl = gsap.timeline();
+      PH.forEach(([n, d]) => { const o = { x: 0 }; tl.call(() => { $('#st', el).textContent = n; feed(f, `<b>${hm(m)}</b> ${n}`); }); tl.to(o, { x: d, duration: Math.max(.5, d / 14), ease: 'none', onUpdate: () => $('#mt', el).textContent = usd(c + o.x / 60 * rate), onComplete: () => { c += d / 60 * rate; m += d; } }); });
+      tl.call(() => { const diff = (c - est) / est * 100; $('#res', el).innerHTML = `<div class="verdict v-good"><i class="bi bi-receipt"></i> Final bill ${usd(c)}: ${Math.abs(diff).toFixed(0)}% ${diff >= 0 ? 'above' : 'below'} the estimate. Cluster deleted, outputs and logs safe in ${t.storeShort}.</div>`; gsap.from('#res > *', { y: 8, opacity: 0 }); });
+    };
+  }
+}];
+
+/* =========================================================
+   LESSON 2 · Monitoring and managing cloud resources
+   ========================================================= */
+const L2 = [
+{
+  short: 'Four layers to watch', title: 'What to monitor, from the bill down to a single task',
+  lead: 'Problems show up at different levels. Learn which tool answers which question.',
+  html: t => `<p>Click each layer. Monitoring a cloud big data job means watching four levels at once:</p>
+  <ul><li><b>Cost</b>: what are we paying, and for what? (${t.cost})</li><li><b>Cluster</b>: are the machines busy, idle or full? (${t.mon}, YARN)</li><li><b>Spark application</b>: which job, stage or task is slow? (Spark UI and history server)</li><li><b>Data</b>: how much is read and written, and in how many files?</li></ul>
+  <p>A slow stage (application layer) causes a long runtime (cluster layer) which causes a high bill (cost layer). Fixing the bottom fixes the top.</p>`,
+  key: 'Cost ← cluster ← Spark app ← data. Diagnose from the bottom, measure the win at the top.',
+  terms: t => [t.mon, 'YARN ResourceManager UI', 'Spark UI', 'Spark history server', t.cost],
+  vis(el){
+    const t = T(), Ly = [['Cost', 'bi-currency-dollar', 'tang', 70, [`What did yesterday’s run cost?`, 'Which project or person is spending most?', 'Are we going to blow the monthly budget?'], t.cost], ['Cluster & nodes', 'bi-hdd-network-fill', 'ocean', 82, ['Is the cluster idle but still running?', 'Is YARN memory full, with work waiting?', 'How many nodes are running right now?'], `${t.mon} + YARN ResourceManager UI`], ['Spark application', 'bi-lightning-charge-fill', 'lilac', 92, ['Which job and stage take the longest?', 'Are some tasks much slower than others?', 'Is data spilling to disk?'], 'Spark UI (live) and Spark history server (after the cluster is gone)'], ['Data', 'bi-database-fill', 'grass', 100, ['How many files does the job read?', 'How big is each file?', 'How much data is shuffled between stages?'], `Spark UI input metrics + ${t.storeShort} storage metrics`]];
+    el.innerHTML = `<div class="row g-3 align-items-center"><div class="col-lg-6">${Ly.map((l, i) => `<div class="layer" data-i="${i}" style="background:${K[l[2]]};width:${l[3]}%"><i class="bi ${l[1]}"></i> ${l[0]}</div>`).join('')}</div><div class="col-lg-6"><div class="panel" id="det"></div></div></div>`;
+    const show = i => { const l = Ly[i]; $$('.layer', el).forEach(x => x.classList.toggle('active', +x.dataset.i === i)); $('#det', el).innerHTML = `<div class="panel-title" style="color:${K[l[2]]}"><i class="bi ${l[1]}"></i> ${l[0]}</div><div class="small fw-bold text-muted">Questions it answers</div>${l[4].map(q => `<div class="small py-1"><i class="bi bi-question-circle-fill" style="color:${K[l[2]]}"></i> ${q}</div>`).join('')}<div class="small fw-bold text-muted mt-2">Where to look</div><div class="small">${l[5]}</div>`; gsap.from('#det > *', { opacity: 0, y: 6, stagger: .04 }); };
+    $$('.layer', el).forEach(x => x.onclick = () => show(+x.dataset.i));
+    gsap.from($$('.layer', el), { scaleX: 0, stagger: .12, duration: .4, ease: 'back.out(1.4)' }); show(1);
+  }
+},
+{
+  short: 'Cluster metrics', title: t => `Cluster health in ${t.mon}`,
+  lead: 'A handful of metrics tell you whether the cluster is working, full, or quietly idling while it bills you.',
+  html: t => `<p>This dashboard replays one hour of a cluster. Watch the metrics while the job runs, then as it finishes:</p>
+  <ul><li><b>YARN memory available %</b>: low means the cluster is full; near 100% means nothing is running.</li><li><b>Containers running</b>: the Spark executors currently allocated.</li><li><b>Apps running</b>: Spark applications in progress.</li><li><b>Idle</b>: on ${t.short}, ${t.idle}.</li></ul>
+  <p>Set the idle alarm. When the cluster has been idle that long, the alarm fires and an automated action deletes it. Compare the cost with leaving it until someone notices in the morning.</p>`,
+  key: 'Watch YARN memory, containers and idle state. Turn “idle for N minutes” into an automatic shutdown.',
+  terms: t => [t.mon, 'YARNMemoryAvailablePercentage', 'ContainerAllocated', 'AppsRunning', PROV === 'aws' ? 'IsIdle' : 'idle alert', 'alarm → action'],
+  vis(el){
+    const rate = P().head.count * P().head.r + 6 * P().sizes[1].r;
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-8"><div class="panel"><div class="row g-2 mb-2">${[['YARN memory available', 'm1'], ['Containers running', 'm2'], ['Apps running', 'm3'], ['Idle for', 'm4']].map(([l, k]) => `<div class="col-6 col-md-3"><div class="stat"><div class="l">${l}</div><div class="v" id="${k}">–</div></div></div>`).join('')}</div><div style="height:200px"><canvas id="cv"></canvas></div></div></div>
+      <div class="col-lg-4"><div class="panel h-100"><label class="small fw-bold">Delete cluster after idle for <span class="badge-dark" id="iv">15</span> min</label><input type="range" min="5" max="60" step="5" value="15" id="it">
+        <button class="btn btn-brand btn-sm mt-2 w-100" id="go"><i class="bi bi-play-fill"></i> Replay the hour</button><div class="mt-3" id="al"><span class="tag t-grass">alarm OK</span></div><div class="mt-2 small" id="res"></div></div></div></div>`;
+    const ch = mkChart($('#cv', el), { type: 'line', data: { labels: [], datasets: [{ label: 'YARN memory available %', data: [], borderColor: K.ocean, backgroundColor: 'rgba(11,107,203,.1)', fill: true, tension: .3, pointRadius: 0, yAxisID: 'y' }, { label: 'containers', data: [], borderColor: K.tang, tension: .3, pointRadius: 0, yAxisID: 'y2' }] }, options: { maintainAspectRatio: false, animation: { duration: 0 }, plugins: { legend: { position: 'bottom' } }, scales: { y: { min: 0, max: 100, title: { display: true, text: '%' } }, y2: { position: 'right', min: 0, max: 50, grid: { display: false } }, x: { ticks: { maxTicksLimit: 8 } } } } });
+    $('#it', el).oninput = () => $('#iv', el).textContent = $('#it', el).value;
+    $('#go', el).onclick = e => {
+      timers.forEach(clearInterval); e.currentTarget.disabled = true; const lim = +$('#it', el).value; let m = 0, idle = 0;
+      ch.data.labels = []; ch.data.datasets.forEach(d => d.data = []); $('#al', el).innerHTML = '<span class="tag t-grass">alarm OK</span>'; $('#res', el).innerHTML = '';
+      const r = mulberry32(5);
+      const id = every(() => {
+        const run = m < 32, mem = run ? 12 + r() * 18 : 100, con = run ? 34 + Math.round(r() * 6) : 0;
+        if (!run) idle++;
+        ch.data.labels.push(hm(60 + m)); ch.data.datasets[0].data.push(mem); ch.data.datasets[1].data.push(con); ch.update();
+        $('#m1', el).textContent = Math.round(mem) + '%'; $('#m2', el).textContent = con; $('#m3', el).textContent = run ? 1 : 0; $('#m4', el).textContent = idle + ' min'; $('#m4', el).style.color = idle ? K.berry : K.ink;
+        if (idle >= lim) {
+          clearInterval(id); $('#go', el).disabled = false;
+          $('#al', el).innerHTML = `<span class="tag t-berry"><i class="bi bi-bell-fill"></i> ALARM: idle ${lim} min → cluster deleted</span>`; gsap.from('#al > *', { scale: 1.4 });
+          const withA = (32 + lim) / 60 * rate, without = (32 + 8 * 60) / 60 * rate;
+          $('#res', el).innerHTML = `Cost with alarm: <b class="mono">${usd(withA)}</b><br>Left until 09:30: <b class="mono" style="color:${K.berry}">${usd(without)}</b>`;
+        }
+        m++;
+      }, 120);
+    };
+  }
+},
+{
+  short: 'YARN containers', title: 'How executors fit onto nodes',
+  lead: 'YARN hands out memory and CPU cores in containers. Badly chosen executor sizes leave expensive capacity unused.',
+  html: t => `<p>Each worker node offers YARN a fixed amount of memory and cores. Every Spark <b>executor</b> asks for a container: its memory, plus about 10% <b>overhead</b>, and some cores.</p>
+  <p>Move the sliders. The striped space is capacity you pay for but cannot use. Watch which resource runs out first: if memory is the limit, cores sit idle; if cores are the limit, memory is wasted.</p>
+  <p>A common starting point is around <b>4–5 cores per executor</b> with memory sized so both resources run out together. Very large executors suffer long garbage-collection pauses; very small ones waste memory on overhead.</p>`,
+  key: 'Size executors so memory and cores run out together on each node. Leftover capacity is money wasted.',
+  terms: () => ['YARN container', 'spark.executor.memory', 'spark.executor.cores', 'memoryOverhead', 'yarn.nodemanager.resource.memory-mb'],
+  vis(el){
+    const NM = 56, NC = 16;
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-4"><div class="panel h-100"><div class="small text-muted mb-2">Each worker: <b>${NC} cores</b> and <b>${NM} GB</b> for YARN</div>
+        <label class="small fw-bold">Executor memory: <span class="badge-dark" id="mv">8</span> GB</label><input type="range" min="2" max="40" value="8" id="em">
+        <label class="small fw-bold mt-2">Executor cores: <span class="badge-dark" id="cv">5</span></label><input type="range" min="1" max="16" value="5" id="ec">
+        <div class="row g-2 mt-2">${[['Executors per node', 'en'], ['Limited by', 'lb'], ['Memory wasted', 'mw'], ['Cores idle', 'ci']].map(([l, k]) => `<div class="col-6"><div class="stat"><div class="l">${l}</div><div class="v" id="${k}" style="font-size:1rem"></div></div></div>`).join('')}</div></div></div>
+      <div class="col-lg-8"><div class="panel h-100" id="nodes"></div></div></div>`;
+    const cols = [K.ocean, K.lilac, K.tang, K.grass, K.berry, K.gold, '#2fa4c7', '#8a6cff'];
+    const upd = () => {
+      const mem = +$('#em', el).value, cor = +$('#ec', el).value; $('#mv', el).textContent = mem; $('#cv', el).textContent = cor;
+      const cont = mem + Math.max(.384, mem * .1), byM = Math.floor(NM / cont), byC = Math.floor(NC / cor), n = Math.min(byM, byC);
+      const wm = NM - n * cont, wc = NC - n * cor;
+      $('#en', el).textContent = n; $('#lb', el).textContent = n === 0 ? 'too big!' : byM < byC ? 'memory' : byC < byM ? 'cores' : 'both (ideal)'; $('#lb', el).style.color = byM === byC ? K.grass : K.tang;
+      $('#mw', el).textContent = wm.toFixed(1) + ' GB'; $('#ci', el).textContent = wc;
+      $('#nodes', el).innerHTML = [1, 2, 3].map(k => `<div class="ynode"><div class="small fw-bold mb-1">Worker ${k}</div><div class="small-note">memory</div><div class="ybar mb-1">${Array.from({ length: n }, (_, i) => `<div style="width:${cont / NM * 100}%;background:${cols[i % cols.length]}">E${i + 1}</div>`).join('')}</div><div class="small-note">cores</div><div class="ybar">${Array.from({ length: n }, (_, i) => `<div style="width:${cor / NC * 100}%;background:${cols[i % cols.length]}">${cor}</div>`).join('')}</div></div>`).join('') + `<div class="small mt-1">Cluster total: <b>${n * 3} executors</b>, <b>${n * 3 * cor} task slots</b> running in parallel.</div>`;
+    };
+    ['em', 'ec'].forEach(id => $('#' + id, el).oninput = upd); upd();
+  }
+},
+{
+  short: 'Spark UI tour', title: 'A tour of the Spark UI: jobs, stages, tasks',
+  lead: 'The Spark UI breaks an application into jobs, jobs into stages, and stages into tasks. Click down the levels.',
+  html: t => `<p>The vocabulary:</p>
+  <ul><li><b>Job</b>: created by an action, such as writing a result or counting rows.</li><li><b>Stage</b>: a chunk of work that can run without moving data between machines. A <b>shuffle</b> (needed for joins and group-bys) ends one stage and starts the next.</li><li><b>Task</b>: one stage’s work on one partition of data. Tasks run in parallel in executor slots.</li></ul>
+  <p>Click Job 2, then a stage in its diagram. After a transient cluster is deleted, the same pages are available in the <b>Spark history server</b>, as long as event logs were written to ${t.storeShort}.</p>`,
+  key: 'Application → jobs (actions) → stages (split at shuffles) → tasks (one per partition).',
+  terms: () => ['job', 'stage', 'task', 'shuffle', 'DAG', 'Spark history server', 'event log'],
+  vis(el){
+    const JOBS = [{ id: 0, d: 'read parquet curated/events', t: '18 s', st: [{ id: 0, n: 'scan parquet', tasks: 96, dur: '18 s', sh: '' }] }, { id: 1, d: 'count rows', t: '9 s', st: [{ id: 1, n: 'scan + partial count', tasks: 96, dur: '7 s', sh: '' }, { id: 2, n: 'final count', tasks: 1, dur: '1 s', sh: '6 KB' }] }, { id: 2, d: 'write results/daily_summary', t: '4.6 min', st: [{ id: 3, n: 'scan events', tasks: 96, dur: '22 s', sh: '' }, { id: 4, n: 'join with patients', tasks: 200, dur: '3.9 min', sh: '41 GB' }, { id: 5, n: 'aggregate + write', tasks: 200, dur: '19 s', sh: '2 GB' }] }];
+    el.innerHTML = `<div class="ui-mock"><div class="ui-top"><span class="logo"><i class="bi bi-lightning-charge-fill"></i> Spark</span>${['Jobs', 'Stages', 'Storage', 'Environment', 'Executors', 'SQL'].map((x, i) => `<button class="ui-tab ${i ? '' : 'active'}">${x}</button>`).join('')}<span class="ms-auto small text-muted">nightly-summary · application_1729_0042</span></div>
+      <div class="p-3"><div class="crumbs mb-2" id="cr"></div><div id="body"></div></div></div>`;
+    const crumbs = arr => { $('#cr', el).innerHTML = arr.map((a, i) => i < arr.length - 1 ? `<a data-i="${i}">${a}</a> › ` : `<b>${a}</b>`).join(''); };
+    const jobs = () => {
+      crumbs(['Application']);
+      $('#body', el).innerHTML = `<table class="dtable"><thead><tr><th>job</th><th>description</th><th>stages</th><th>duration</th></tr></thead><tbody>${JOBS.map(j => `<tr class="jr" data-j="${j.id}" style="cursor:pointer"><td>${j.id}</td><td style="color:${K.ocean};text-decoration:underline">${j.d}</td><td>${j.st.length}</td><td>${j.t}</td></tr>`).join('')}</tbody></table>`;
+      $$('.jr', el).forEach(r => r.onclick = () => job(+r.dataset.j)); gsap.from($$('.jr', el), { opacity: 0, x: -8, stagger: .06 });
+    };
+    const job = j => {
+      const J = JOBS[j]; crumbs(['Application', `Job ${j}`]); $$('#cr a', el).forEach(a => a.onclick = jobs);
+      $('#body', el).innerHTML = `<div class="small fw-bold mb-2">DAG of job ${j}: click a stage</div><div class="dag">${J.st.map((s, i) => `${i ? `<div class="arr">shuffle<br><i class="bi bi-arrow-right fs-5"></i><br>${s.sh}</div>` : ''}<div class="st" data-s="${i}">Stage ${s.id}<div class="fw-normal small">${s.n}</div></div>`).join('')}</div><div id="sd" class="mt-3"></div>`;
+      $$('.st', el).forEach(b => b.onclick = () => stage(j, +b.dataset.s)); gsap.from($$('.dag > *', el), { opacity: 0, x: -12, stagger: .1 });
+    };
+    const stage = (j, s) => {
+      const S = JOBS[j].st[s]; $$('.st', el).forEach(b => b.classList.toggle('sel', +b.dataset.s === s));
+      const r = mulberry32(S.id + 3), rows = Array.from({ length: 6 }, (_, i) => [i, `exec ${1 + (i % 4)}`, S.id === 4 && i === 5 ? '3.8 min' : (8 + r() * 6).toFixed(1) + ' s']);
+      $('#sd', el).innerHTML = `<div class="row g-2 mb-2">${[['tasks', S.tasks], ['stage duration', S.dur], ['shuffle read', S.sh || '–']].map(([l, x]) => `<div class="col-4"><div class="stat"><div class="l">${l}</div><div class="v" style="font-size:1rem">${x}</div></div></div>`).join('')}</div><div class="small fw-bold mb-1">First tasks (one per partition)</div><table class="dtable"><thead><tr><th>task</th><th>executor</th><th>duration</th></tr></thead><tbody>${rows.map(x => `<tr class="${x[2].includes('min') ? 'bad' : ''}"><td>${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td></tr>`).join('')}</tbody></table>${S.id === 4 ? `<div class="verdict v-warn mt-2">One task takes minutes while the rest take seconds. Keep that in mind: it is bottleneck #1.</div>` : ''}`;
+      gsap.from('#sd > *', { opacity: 0, y: 6, stagger: .05 });
+    };
+    jobs();
+  }
+},
+{
+  short: 'Reading a stage', title: 'Read the stage summary like a doctor reads a blood test',
+  lead: 'The stage page shows the spread of every task metric. Three patterns point straight at the three classic bottlenecks.',
+  html: t => `<p>Spark summarises each metric across all tasks of a stage: minimum, 25th percentile, median, 75th percentile, maximum. Healthy stages have <b>similar values across the row</b>. Click any row to learn what it means.</p>
+  <p>This stage has three red flags, each a different bottleneck that the next steps fix:</p>
+  <ul><li><b>Max duration far above the median</b> → data skew (step 6).</li><li><b>Spill to disk above zero</b> → not enough memory per task (step 7).</li><li><b>Thousands of tasks with tiny input each</b> → too many small files (step 8).</li></ul>`,
+  key: 'Compare median with max, look for spill, and check input per task. Each pattern names a bottleneck.',
+  terms: () => ['summary metrics', 'percentiles', 'GC time', 'shuffle read', 'spill (memory / disk)', 'scheduler delay'],
+  vis(el){
+    const M = [['Duration', ['0.2 s', '0.9 s', '1.4 s', '2.1 s', '3.9 min'], [4], 'How long each task ran. Here the slowest task takes 3.9 minutes while the median takes 1.4 seconds: the whole stage waits for that one task.', 'Skew → step 6'], ['GC time', ['0 ms', '20 ms', '40 ms', '90 ms', '48 s'], [4], 'Time the JVM spent cleaning up memory. High GC time means tasks are short of memory.', 'Memory → step 7'], ['Input size', ['148 KB', '172 KB', '190 KB', '210 KB', '230 KB'], [0, 1, 2, 3, 4], 'Data each task read. A few hundred KB per task is far too little; good tasks read roughly 100–200 MB.', 'Small files → step 8'], ['Shuffle read', ['12 MB', '14 MB', '15 MB', '17 MB', '6.1 GB'], [4], 'Data each task received from the previous stage. One task receiving 6 GB means one key has most of the data.', 'Skew → step 6'], ['Spill (memory)', ['0', '0', '0', '0', '11.2 GB'], [4], 'Data that did not fit in execution memory, measured in memory form.', 'Memory → step 7'], ['Spill (disk)', ['0', '0', '0', '0', '4.1 GB'], [4], 'The same spilled data written to local disk. Writing and re-reading it slows the task badly.', 'Memory → step 7'], ['Scheduler delay', ['8 ms', '15 ms', '22 ms', '40 ms', '310 ms'], [], 'Time waiting to be launched. With 21,000 tiny tasks, small per-task overheads add up to minutes.', 'Small files → step 8']];
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-8"><div class="ui-mock"><div class="ui-top"><span class="logo"><i class="bi bi-lightning-charge-fill"></i> Spark</span><span class="small fw-bold">Stage 4 · 21,400 tasks · join with patients</span></div>
+        <div class="p-2 table-responsive"><table class="dtable qmet"><thead><tr><th>metric</th><th>min</th><th>25th</th><th>median</th><th>75th</th><th>max</th></tr></thead><tbody>${M.map((m, i) => `<tr data-i="${i}"><td style="font-family:Nunito;font-weight:800">${m[0]}</td>${m[1].map((x, j) => `<td class="${m[2].includes(j) ? 'bad' : ''}">${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div></div>
+      <div class="col-lg-4"><div class="panel h-100" id="det"></div></div></div>`;
+    const show = i => { const m = M[i]; $$('.qmet tr[data-i]', el).forEach(r => r.classList.toggle('sel', +r.dataset.i === i)); $('#det', el).innerHTML = `<div class="panel-title">${m[0]}</div><div class="small mb-2">${m[3]}</div><span class="tag ${m[4].includes('6') ? 't-berry' : m[4].includes('7') ? 't-tang' : 't-lilac'}">${m[4]}</span>`; gsap.from('#det > *', { opacity: 0, y: 6, stagger: .05 }); };
+    $$('.qmet tr[data-i]', el).forEach(r => r.onclick = () => show(+r.dataset.i));
+    gsap.from($$('td.bad', el), { backgroundColor: '#fff', duration: .8, stagger: .05, delay: .3 }); show(0);
+  }
+},
+{
+  short: 'Bottleneck 1: skew', title: 'Bottleneck 1 · Data skew: one task does most of the work',
+  lead: 'When one key holds a huge share of the rows, one task gets all of them, and the whole stage waits for it.',
+  html: t => `<p>We join events with patients by <code>city</code>. Most hospital events come from Karachi, so after the shuffle one task receives a huge chunk while the others finish in seconds. In the timeline, every slot sits idle waiting for that one long bar.</p>
+  <p>Toggle the fix. Two common remedies:</p>
+  <ul><li><b>Adaptive Query Execution (AQE) skew-join handling</b>: Spark detects the oversized partition at runtime and splits it into several tasks automatically. It is on by default in recent Spark versions; make sure it is not switched off.</li>
+  <li><b>Salting</b>: add a random number to the hot key so its rows spread over several partitions, then combine the results.</li></ul>`,
+  key: 'Skew = one partition far bigger than the rest. Split it (AQE skew join or salting) so all slots share the work.',
+  terms: () => ['data skew', 'hot key', 'spark.sql.adaptive.enabled', 'spark.sql.adaptive.skewJoin.enabled', 'salting'],
+  vis(el){
+    const r = mulberry32(14), base = Array.from({ length: 47 }, () => 18 + r() * 12), hot = 290;
+    el.innerHTML = `<div class="d-flex gap-2 mb-3 flex-wrap align-items-center"><div class="btn-group btn-group-sm" id="fx"><button class="btn btn-seg active" data-v="0">Skewed</button><button class="btn btn-seg" data-v="1">Fixed: hot partition split</button></div><span class="pill">16 task slots (4 executors × 4 cores)</span></div>
+      <div class="row g-3"><div class="col-lg-8"><div class="panel"><div class="small fw-bold mb-1">Task timeline (each row is a slot)</div><div id="g"></div></div></div>
+        <div class="col-lg-4"><div class="panel h-100"><div class="small fw-bold mb-1">Rows per city key</div><div style="height:130px"><canvas id="kc"></canvas></div><div class="row g-2 mt-1">${[['Median task', 'md'], ['Max task', 'mx'], ['Stage time', 'stt']].map(([l, k]) => `<div class="col-4"><div class="stat"><div class="l">${l}</div><div class="v" style="font-size:.95rem" id="${k}"></div></div></div>`).join('')}</div></div></div></div>`;
+    mkChart($('#kc', el), { type: 'bar', data: { labels: ['Karachi', 'Lahore', 'Hyderabad', 'Multan', 'Peshawar', 'Quetta'], datasets: [{ data: [62, 11, 9, 7, 6, 5], backgroundColor: [K.berry, K.ocean, K.ocean, K.ocean, K.ocean, K.ocean], borderRadius: 4 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => v + '%' } } } } });
+    const draw = fixed => {
+      const tasks = fixed ? [...base, ...Array.from({ length: 12 }, () => hot / 12 + r() * 3)] : [...base, hot];
+      const slots = Array.from({ length: 16 }, () => []), end = Array(16).fill(0);
+      tasks.forEach((d, i) => { const s = end.indexOf(Math.min(...end)); slots[s].push([end[s], d, (!fixed && d === hot) || (fixed && i >= 47)]); end[s] += d; });
+      const span = Math.max(...end), W = 640, sc = W / 320;
+      let svg = `<svg viewBox="0 0 ${W + 40} ${16 * 14 + 24}" class="w-100">`;
+      slots.forEach((sl, i) => sl.forEach(([s, d, h]) => { svg += `<rect class="tk" x="${30 + s * sc}" y="${i * 14}" width="${Math.max(1, d * sc - 1)}" height="11" rx="2" fill="${h ? K.berry : K.ocean}" opacity="${h ? 1 : .75}"/>`; }));
+      svg += `<line x1="${30 + span * sc}" x2="${30 + span * sc}" y1="0" y2="${16 * 14}" stroke="${K.ink}" stroke-dasharray="4 3"/><text x="${Math.min(W - 20, 30 + span * sc + 4)}" y="${16 * 14 + 16}" font-size="11" fill="${K.ink}" font-weight="700">stage ends ${Math.round(span)} s</text>`;
+      [0, 60, 120, 180, 240, 300].forEach(x => svg += `<text x="${30 + x * sc}" y="${16 * 14 + 16}" font-size="10" fill="${K.muted}">${x}s</text>`);
+      $('#g', el).innerHTML = svg + '</svg>';
+      gsap.from($$('.tk', el), { attr: { width: 0 }, duration: .6, stagger: .004 });
+      const sorted = tasks.slice().sort((a, b) => a - b);
+      $('#md', el).textContent = Math.round(sorted[Math.floor(sorted.length / 2)]) + ' s'; $('#mx', el).textContent = Math.round(sorted[sorted.length - 1]) + ' s'; $('#stt', el).textContent = Math.round(span) + ' s';
+      $('#stt', el).style.color = fixed ? K.grass : K.berry;
+    };
+    segBind('fx', el, x => draw(x === '1')); draw(false);
+  }
+},
+{
+  short: 'Bottleneck 2: spill', title: 'Bottleneck 2 · Spill: tasks that don’t fit in memory',
+  lead: 'When a task’s share of shuffled data is bigger than the memory it has, Spark writes the overflow to disk and reads it back. Slow.',
+  html: t => `<p>This stage shuffles 400 GB. The number of <b>shuffle partitions</b> decides how much each task must hold. Spark’s default is 200, which is often far too few for big data.</p>
+  <p>Move the sliders. With too few partitions each task’s chunk overflows into a disk <b>spill</b>, and GC time climbs. With far too many, tasks become tiny and scheduling overhead takes over. The chart shows the U-shaped curve, with a sweet spot in the middle.</p>
+  <p>Fixes: raise <code>spark.sql.shuffle.partitions</code> (or let AQE coalesce from a high number automatically), or give each core more memory by using fewer cores per executor or bigger, memory-optimised machines.</p>`,
+  key: 'Spill means each task’s data doesn’t fit. More partitions or more memory per core; aim for roughly 100–200 MB per task.',
+  terms: () => ['spark.sql.shuffle.partitions', 'spill', 'execution memory', 'spark.memory.fraction', 'AQE coalesce partitions'],
+  vis(el){
+    const DATA = 400 * 1024, SLOTS = 64, PARTS = [50, 100, 200, 400, 800, 1600, 3200, 6400, 12800];
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-4"><div class="panel h-100">
+        <label class="small fw-bold">Shuffle partitions: <span class="badge-dark" id="pv">200</span></label><input type="range" min="0" max="${PARTS.length - 1}" value="2" id="pp">
+        <label class="small fw-bold mt-2">Executor memory (4 cores each)</label><div class="btn-group btn-group-sm w-100 mb-2" id="mm"><button class="btn btn-seg" data-v="4">4 GB</button><button class="btn btn-seg active" data-v="8">8 GB</button><button class="btn btn-seg" data-v="16">16 GB</button></div>
+        <div class="small fw-bold">One task’s memory</div><div class="meter mt-1" style="height:26px;position:relative"><i id="fit" style="background:${K.ocean}"></i></div><div class="d-flex justify-content-between small-note"><span id="pt"></span><span id="mt"></span></div>
+        <div class="row g-2 mt-2">${[['Total spill to disk', 'sp'], ['Stage time', 'st']].map(([l, k]) => `<div class="col-6"><div class="stat"><div class="l">${l}</div><div class="v" id="${k}" style="font-size:1rem"></div></div></div>`).join('')}</div></div></div>
+      <div class="col-lg-8"><div class="panel h-100"><div style="height:280px"><canvas id="cv"></canvas></div></div></div></div>`;
+    let mem = 8;
+    const model = (P, m) => { const per = DATA / P, avail = m * 1024 * .6 / 4, spill = Math.max(0, per - avail); const task = per / 150 + spill / 40 + .3; return { per, avail, spill, time: Math.ceil(P / SLOTS) * task, total: spill * P / 1024 }; };
+    const ch = mkChart($('#cv', el), { type: 'line', data: { labels: PARTS.map(String), datasets: [{ label: 'stage time (s)', data: [], borderColor: K.lilac, backgroundColor: 'rgba(123,97,255,.12)', fill: true, tension: .35, pointRadius: 3 }, { label: 'current setting', data: [], pointRadius: 9, pointBackgroundColor: K.tang, pointBorderColor: '#fff', pointBorderWidth: 2, showLine: false }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'stage time (s)' } }, x: { title: { display: true, text: 'shuffle partitions' } } } } });
+    const upd = () => {
+      const P = PARTS[+$('#pp', el).value], m = model(P, mem); $('#pv', el).textContent = fmt(P);
+      ch.data.datasets[0].data = PARTS.map(x => model(x, mem).time); ch.data.datasets[1].data = PARTS.map(x => x === P ? m.time : null); ch.update();
+      const fill = Math.min(100, m.per / m.avail * 100);
+      $('#fit', el).style.width = fill + '%'; $('#fit', el).style.background = m.spill ? K.berry : K.ocean;
+      $('#pt', el).textContent = `data per task ${m.per >= 1024 ? (m.per / 1024).toFixed(1) + ' GB' : Math.round(m.per) + ' MB'}`; $('#mt', el).textContent = `memory ${Math.round(m.avail)} MB`;
+      $('#sp', el).textContent = m.total ? m.total.toFixed(0) + ' GB' : '0'; $('#sp', el).style.color = m.total ? K.berry : K.grass; $('#st', el).textContent = Math.round(m.time) + ' s';
+    };
+    $('#pp', el).oninput = upd; segBind('mm', el, x => { mem = +x; upd(); }); upd();
+  }
+},
+{
+  short: 'Bottleneck 3: small files', title: 'Bottleneck 3 · Too many small files',
+  lead: 'Object storage is fast for big reads and slow for many tiny ones. 200,000 files of 256 KB hurt far more than 400 files of 128 MB.',
+  html: t => `<p>Both datasets hold the same 50 GB. The difference is how many objects ${t.storeShort} must list and open. Each file costs a request with tens of milliseconds of latency, so the time goes into <b>listing</b> and <b>opening files</b>, not reading data. In the Spark UI this looks like thousands of tasks, each with tiny input, plus a long pause before the job even starts.</p>
+  <p>Press <b>Compact the files</b>. Common fixes:</p>
+  <ul><li>Run a <b>compaction job</b> that rewrites small files into ~128–512 MB files.</li><li>Stop creating them: <b>coalesce or repartition</b> before writing, so each output partition writes a few large files.</li><li>For streaming inputs, write in bigger batches or compact on a schedule.</li></ul>`,
+  key: 'Aim for files around 128–512 MB. Compact existing small files and coalesce before writing new ones.',
+  terms: t => ['small files problem', 'compaction', 'coalesce()', 'repartition()', 'spark.sql.files.maxPartitionBytes', t.storeShort + ' request latency'],
+  vis(el){
+    const model = big => big ? { files: 400, size: '128 MB', list: .1, open: 400 * .04 / 64, read: 8, tasks: 400 } : { files: 200000, size: '256 KB', list: 40, open: 200000 * .04 / 64, read: 8, tasks: 6700 };
+    el.innerHTML = `<div class="d-flex gap-2 mb-3 flex-wrap"><button class="btn btn-warm btn-sm" id="cp"><i class="bi bi-arrows-collapse"></i> Compact the files</button><button class="btn btn-ghost btn-sm" id="rs"><i class="bi bi-arrow-counterclockwise"></i> Back to small files</button></div>
+      <div class="row g-3"><div class="col-lg-5"><div class="panel h-100"><div class="small fw-bold mb-1" id="ft"></div><div class="files" id="fl"></div><div class="small-note mt-1" id="fn"></div></div></div>
+        <div class="col-lg-7"><div class="panel h-100"><div class="row g-2 mb-2">${[['Files', 'nf'], ['Avg file size', 'fs'], ['Tasks', 'nt'], ['Job time', 'jt']].map(([l, k]) => `<div class="col-6 col-md-3"><div class="stat"><div class="l">${l}</div><div class="v" style="font-size:1rem" id="${k}"></div></div></div>`).join('')}</div><div style="height:170px"><canvas id="cv"></canvas></div></div></div></div>`;
+    const ch = mkChart($('#cv', el), { type: 'bar', data: { labels: ['time'], datasets: [{ label: 'listing files', data: [0], backgroundColor: K.berry }, { label: 'opening files', data: [0], backgroundColor: K.tang }, { label: 'reading data', data: [0], backgroundColor: K.grass }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true, title: { display: true, text: 'seconds' } }, y: { stacked: true, display: false } } } });
+    const draw = big => {
+      const m = model(big);
+      $('#ft', el).textContent = big ? '400 files of ~128 MB' : '200,000 files of ~256 KB'; $('#fn', el).textContent = big ? 'each square = 1 file' : 'each dot = 100 files';
+      $('#fl', el).innerHTML = big ? Array.from({ length: 400 }, () => `<i style="width:15px;height:15px;background:${K.ocean}"></i>`).join('') : Array.from({ length: 2000 }, () => `<i style="width:5px;height:5px;background:${K.berry}"></i>`).join('');
+      gsap.from($$('#fl i', el), { scale: 0, duration: .3, stagger: { each: big ? .002 : .0004, from: 'random' } });
+      $('#nf', el).textContent = fmt(m.files); $('#fs', el).textContent = m.size; $('#nt', el).textContent = fmt(m.tasks); const tot = m.list + m.open + m.read; $('#jt', el).textContent = Math.round(tot) + ' s'; $('#jt', el).style.color = big ? K.grass : K.berry;
+      ch.data.datasets[0].data = [m.list]; ch.data.datasets[1].data = [m.open]; ch.data.datasets[2].data = [m.read]; ch.update();
+    };
+    $('#cp', el).onclick = () => { gsap.to($$('#fl i', el), { scale: 0, duration: .4, stagger: { each: .0003, from: 'center' }, onComplete: () => draw(true) }); };
+    $('#rs', el).onclick = () => draw(false); draw(false);
+  }
+},
+{
+  short: 'Idle executors', title: 'Dynamic allocation: release executors you are not using',
+  lead: 'Jobs have busy phases and quiet phases. A fixed number of executors means paying for idle ones during the quiet parts.',
+  html: t => `<p>This job has three phases: a wide scan (lots of parallel work), a narrow middle phase (only a few tasks) and another wide phase. Compare:</p>
+  <ul><li><b>Fixed executors</b>: 20 executors from start to finish. Grey area = idle executors you pay for.</li><li><b>Dynamic allocation</b>: Spark asks YARN for executors when tasks are waiting and gives them back after they have been idle for a while.</li></ul>
+  <p>Releasing executors only saves money if the cluster then shrinks too, which is why dynamic allocation works best together with ${t.scale}.</p>`,
+  key: 'Dynamic allocation + cluster scaling = pay for executors only while tasks need them.',
+  terms: t => ['spark.dynamicAllocation.enabled', 'executorIdleTimeout', 'minExecutors / maxExecutors', t.scale],
+  vis(el){
+    const N = 30, need = Array.from({ length: N }, (_, m) => m < 10 ? 20 : m < 25 ? 3 : 16);
+    const fixed = need.map(() => 20), dyn = need.map((n, m) => m === 0 ? 4 : m === 1 ? 10 : m === 10 ? 20 : m === 25 ? 8 : n);
+    el.innerHTML = `<div class="d-flex gap-2 mb-3"><div class="btn-group btn-group-sm" id="md"><button class="btn btn-seg active" data-v="f">Fixed · 20 executors</button><button class="btn btn-seg" data-v="d">Dynamic allocation</button></div></div>
+      <div class="row g-3"><div class="col-lg-8"><div class="panel"><div style="height:250px"><canvas id="cv"></canvas></div></div></div>
+        <div class="col-lg-4"><div class="panel h-100">${[['Executor-minutes paid', 'em'], ['Busy share', 'bs'], ['Idle executor-minutes', 'id']].map(([l, k]) => `<div class="stat mb-2"><div class="l">${l}</div><div class="v" id="${k}"></div></div>`).join('')}</div></div></div>`;
+    const ch = mkChart($('#cv', el), { type: 'bar', data: { labels: need.map((_, m) => m + 'm'), datasets: [{ label: 'busy executors', data: [], backgroundColor: K.ocean, stack: 's' }, { label: 'idle executors (paid)', data: [], backgroundColor: '#c3cfdc', stack: 's' }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, beginAtZero: true, max: 22, title: { display: true, text: 'executors' } } } } });
+    const show = mode => { const run = mode === 'f' ? fixed : dyn, busy = need.map((n, i) => Math.min(n, run[i])), idle = run.map((r, i) => r - busy[i]); ch.data.datasets[0].data = busy; ch.data.datasets[1].data = idle; ch.update(); const paid = run.reduce((a, b) => a + b, 0), b = busy.reduce((a, x) => a + x, 0); $('#em', el).textContent = paid; $('#bs', el).textContent = Math.round(b / paid * 100) + '%'; $('#id', el).textContent = paid - b; $('#id', el).style.color = paid - b > 50 ? K.berry : K.grass; };
+    segBind('md', el, show); show('f');
+  }
+},
+{
+  short: 'Watch the bill', title: 'Watch the bill: budgets, tags and the forgotten cluster',
+  lead: 'Daily cost data, split by tags, shows where money goes. Budgets warn you before the month ends badly.',
+  html: t => `<p>This is October’s daily spend for the lab account, split by the <code>project</code> tag. Something happened around the 18th. Press <b>Explain the spike</b>.</p>
+  <p>Set the monthly budget. ${t.cost} can send alerts when actual or <b>forecast</b> spend crosses thresholds such as 50%, 80% and 100%. The forecast (dotted line) projects the current daily rate to the end of the month, so you are warned while there is still time to act.</p>
+  <p>Untagged spend is a warning sign in itself: it is usually something nobody remembers creating. Many teams require tags before a cluster can even be created.</p>`,
+  key: 'Tag every resource, set budgets with forecast alerts, and treat untagged spend as an incident.',
+  terms: t => [t.cost, 'cost allocation tags', 'budget threshold', 'forecast', 'anomaly'],
+  vis(el){
+    const r = mulberry32(31), D = 31, today = 23;
+    const lab = Array.from({ length: D }, (_, d) => d < today ? 10 + r() * 6 : null), an = Array.from({ length: D }, (_, d) => d < today ? 6 + r() * 4 : null), un = Array.from({ length: D }, (_, d) => d < today ? (d >= 17 && d <= 20 ? 52 : r() * 1.5) : null);
+    const daily = lab.map((x, i) => x === null ? null : x + an[i] + un[i]); let s = 0; const cum = daily.map(x => x === null ? null : (s += x));
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-8"><div class="panel"><div style="height:270px"><canvas id="cv"></canvas></div></div></div>
+      <div class="col-lg-4"><div class="panel h-100"><label class="small fw-bold">Monthly budget: <span class="badge-dark" id="bv">$800</span></label><input type="range" min="400" max="1400" step="50" value="800" id="bd">
+        <div class="mt-2" id="al"></div><button class="btn btn-warm btn-sm mt-2 w-100" id="ex"><i class="bi bi-search"></i> Explain the spike</button><div class="mt-2 small" id="exr"></div></div></div></div>`;
+    const ch = mkChart($('#cv', el), { data: { labels: Array.from({ length: D }, (_, d) => 'Oct ' + (d + 1)), datasets: [{ type: 'bar', label: 'project=bda-lab', data: lab, backgroundColor: K.ocean, stack: 'd', yAxisID: 'y' }, { type: 'bar', label: 'project=analytics', data: an, backgroundColor: K.lilac, stack: 'd', yAxisID: 'y' }, { type: 'bar', label: 'untagged', data: un, backgroundColor: K.berry, stack: 'd', yAxisID: 'y' }, { type: 'line', label: 'cumulative', data: cum, borderColor: K.ink, pointRadius: 0, yAxisID: 'y2', borderWidth: 2 }, { type: 'line', label: 'forecast', data: [], borderColor: K.ink, borderDash: [5, 4], pointRadius: 0, yAxisID: 'y2', borderWidth: 2 }, { type: 'line', label: 'budget', data: [], borderColor: K.tang, pointRadius: 0, yAxisID: 'y2', borderWidth: 2 }] },
+      options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true, ticks: { maxTicksLimit: 10 } }, y: { stacked: true, title: { display: true, text: 'daily $' } }, y2: { position: 'right', grid: { display: false }, beginAtZero: true, ticks: { callback: x => '$' + fmt(x) }, title: { display: true, text: 'cumulative $' } } } } });
+    const upd = () => {
+      const B = +$('#bd', el).value; $('#bv', el).textContent = usd(B, 0);
+      const last = cum[today - 1], rate = (last - cum[today - 4]) / 3, fc = cum.map((x, i) => i < today - 1 ? null : last + rate * (i - (today - 1)));
+      ch.data.datasets[4].data = fc; ch.data.datasets[5].data = Array(D).fill(B); ch.options.scales.y2.max = Math.ceil(Math.max(B, fc[D - 1]) * 1.1 / 100) * 100; ch.update();
+      const end = fc[D - 1], al = [[.5, '50% actual'], [.8, '80% actual'], [1, '100% actual']].map(([f, l]) => { const d = cum.findIndex(x => x !== null && x >= B * f); return d >= 0 ? `<div class="small"><span class="tag t-tang">${l}</span> on Oct ${d + 1}</div>` : ''; }).join('');
+      $('#al', el).innerHTML = al + (end > B ? `<div class="verdict v-bad mt-1">Forecast ${usd(end, 0)} exceeds budget by ${usd(end - B, 0)}.</div>` : `<div class="verdict v-good mt-1">Forecast ${usd(end, 0)}: within budget.</div>`);
+    };
+    $('#bd', el).oninput = upd; upd();
+    $('#ex', el).onclick = () => { ch.data.datasets[0].backgroundColor = '#c9d6e4'; ch.data.datasets[1].backgroundColor = '#d8d2f7'; ch.update(); $('#exr', el).innerHTML = `<div class="verdict v-warn">Untagged ${T().short} cluster, created Oct 18 for a “quick test”, idle for 96 hours. About ${usd(52 * 4, 0)} wasted. No owner tag, so it took four days to find whose it was.</div>`; gsap.from('#exr > *', { y: 8, opacity: 0 }); };
+  }
+},
+{
+  short: 'Alarms & automation', title: 'Let alarms take action, not just send emails',
+  lead: 'Humans forget and sleep. Turn the most common problems into rules that act automatically.',
+  html: t => `<p>Each rule watches a metric and triggers an action. Toggle rules on and off, then press <b>Run the day</b> and compare the cost.</p>
+  <ul><li><b>Idle for 30 min → delete the cluster.</b> The single most valuable rule.</li><li><b>YARN memory full for 10 min → add nodes</b>, so the job doesn’t crawl.</li><li><b>Job failed → notify the owner</b> with a link to the logs.</li><li><b>Budget forecast over 80% → email the team.</b></li></ul>
+  <p>On ${t.short} these are built from ${t.mon} alarms or alerts plus an action (a notification, a scaling policy, or a small function that deletes the cluster).</p>`,
+  key: 'Monitoring without action is just watching. Automate shutdown, scaling and notifications.',
+  terms: t => [t.mon + ' alarm', 'action group / notification', 'scaling policy', 'serverless function', 'runbook'],
+  vis(el){
+    const rate = P().head.count * P().head.r + 6 * P().sizes[1].r;
+    const R = [['idle', 'Idle 30 min → delete cluster', 'grass'], ['scale', 'YARN memory full 10 min → add nodes', 'ocean'], ['fail', 'Job failed → notify owner', 'berry'], ['budget', 'Budget forecast > 80% → email team', 'tang']];
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-4"><div class="panel h-100">${R.map(([k, l, h]) => `<div class="form-check form-switch py-1"><input class="form-check-input" type="checkbox" id="r_${k}" checked><label class="form-check-label small fw-bold" for="r_${k}" style="color:${K[h]}">${l}</label></div>`).join('')}<button class="btn btn-brand btn-sm mt-3 w-100" id="go"><i class="bi bi-play-fill"></i> Run the day</button>
+        <div class="row g-2 mt-2"><div class="col-6"><div class="stat"><div class="l">Cluster-hours</div><div class="v" id="ch">–</div></div></div><div class="col-6"><div class="stat"><div class="l">Day’s cost</div><div class="v" id="dc">–</div></div></div></div></div></div>
+      <div class="col-lg-8"><div class="panel h-100"><div class="position-relative mb-2" style="height:34px;background:var(--grid);border-radius:10px;overflow:hidden" id="tlb"><div id="cur" style="position:absolute;top:0;bottom:0;width:3px;background:${K.ink};left:0"></div></div><div class="d-flex justify-content-between small-note"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div><div class="feed mt-2" id="fd" style="height:190px"></div></div></div></div>`;
+    $('#go', el).onclick = e => {
+      gsap.globalTimeline.clear(); e.currentTarget.disabled = true; $('#fd', el).innerHTML = ''; $$('#tlb .seg', el).forEach(x => x.remove());
+      const on = k => $('#r_' + k, el).checked, f = $('#fd', el), bar = $('#tlb', el), segs = [];
+      const addSeg = (a, b, c) => { const d = document.createElement('div'); d.className = 'seg'; d.style.cssText = `position:absolute;top:6px;bottom:6px;left:${a / 1440 * 100}%;width:${(b - a) / 1440 * 100}%;background:${c};border-radius:6px`; bar.prepend(d); segs.push([a, b]); gsap.from(d, { scaleX: 0, transformOrigin: 'left', duration: .4 }); };
+      const jobEnd = on('scale') ? 140 : 205, idleEnd1 = on('idle') ? jobEnd + 30 : 570, adhocEnd = on('idle') ? 840 + 75 : 1440;
+      const EV = [[60, () => { feed(f, `<b>01:00</b> nightly cluster created, job starts`); }], [80, () => feed(f, on('scale') ? `<b>01:20</b> <span style="color:${K.ocean}">YARN memory full → 4 nodes added</span>` : `<b>01:20</b> YARN memory full… job keeps crawling`)], [jobEnd, () => { addSeg(60, jobEnd, K.ocean); feed(f, `<b>${hm(jobEnd)}</b> nightly job finished`); }], [idleEnd1, () => { addSeg(jobEnd, idleEnd1, '#a9b6c6'); feed(f, on('idle') ? `<b>${hm(idleEnd1)}</b> <span style="color:${K.grass}">idle 30 min → cluster deleted</span>` : `<b>09:30</b> <span style="color:${K.berry}">someone notices the idle cluster and deletes it</span>`); }], [780, () => feed(f, on('fail') ? `<b>13:00</b> <span style="color:${K.berry}">ad-hoc job failed → owner notified with log link</span>` : `<b>13:00</b> ad-hoc job failed silently`)], [840, () => { addSeg(720, 840, K.lilac); feed(f, `<b>14:00</b> analyst’s ad-hoc cluster finishes its work`); }], [adhocEnd, () => { addSeg(840, adhocEnd, '#a9b6c6'); feed(f, on('idle') ? `<b>${hm(adhocEnd)}</b> <span style="color:${K.grass}">idle 30 min → cluster deleted</span>` : `<b>24:00</b> <span style="color:${K.berry}">ad-hoc cluster still running overnight</span>`); }], [1020, () => feed(f, on('budget') ? `<b>17:00</b> <span style="color:${K.tang}">budget forecast 84% → team emailed</span>` : `<b>17:00</b> budget at 84%, nobody knows`)]].sort((a, b) => a[0] - b[0]);
+      const tl = gsap.timeline({ onComplete: () => { $('#go', el).disabled = false; } });
+      tl.to('#cur', { left: '100%', duration: 6, ease: 'none' }, 0);
+      EV.forEach(([m, fn]) => tl.call(fn, null, m / 1440 * 6));
+      tl.call(() => { const hrs = ((jobEnd - 60) * (on('scale') ? 1.4 : 1) + (idleEnd1 - jobEnd) + (adhocEnd - 720)) / 60; $('#ch', el).textContent = hrs.toFixed(1); $('#dc', el).textContent = usd(hrs * rate); });
+    };
+  }
+},
+{
+  short: 'Before & after', title: 'Measure the win: before and after every fix',
+  lead: 'Apply the fixes from both lessons one by one and watch runtime and cost per run fall.',
+  html: t => `<p>We start from a careless baseline: an always-on-demand cluster, data skew, spill, small files, fixed executors and no automatic shutdown. Switch the fixes on in any order.</p>
+  <p>The waterfall shows how much each fix saves per run. Notice that the biggest single saving usually comes from the boring one: <b>turning the cluster off</b>. The Spark fixes make the job faster, which also makes it cheaper, because time is money in the cloud.</p>
+  <p>Finally, verify: compare the new cost per run in ${t.cost} with your estimate from Lesson 1. If they match, your monitoring and your model of the costs both work.</p>`,
+  key: 'Faster is cheaper in the cloud. Fix the bottlenecks, shut down idle clusters, and verify savings on the bill.',
+  terms: t => ['baseline', 'cost per run', 'waterfall', t.cost],
+  vis(el){
+    const p = P(), s = p.sizes[1], nodes = 10;
+    const FX = [['auto', 'Automatic shutdown', 'grass'], ['skew', 'Fix skew (AQE)', 'berry'], ['spill', 'Fix spill (partitions)', 'tang'], ['files', 'Compact small files', 'lilac'], ['dyn', 'Dynamic allocation + scaling', 'ocean'], ...(PROV === 'aws' ? [['spot', 'Spot task nodes', 'gold']] : [])];
+    el.innerHTML = `<div class="row g-3"><div class="col-lg-4"><div class="panel h-100">${FX.map(([k, l, h]) => `<div class="form-check form-switch py-1"><input class="form-check-input" type="checkbox" id="f_${k}"><label class="form-check-label small fw-bold" for="f_${k}" style="color:${K[h]}">${l}</label></div>`).join('')}
+        <div class="row g-2 mt-2"><div class="col-6"><div class="stat"><div class="l">Runtime</div><div class="v" id="rt"></div></div></div><div class="col-6"><div class="stat"><div class="l">Cost per run</div><div class="v" id="cr"></div></div></div><div class="col-12"><div class="stat"><div class="l">Per month (30 runs)</div><div class="v" id="pm"></div></div></div></div></div></div>
+      <div class="col-lg-8"><div class="panel h-100"><div style="height:300px"><canvas id="cv"></canvas></div></div></div></div>`;
+    const calc = on => {
+      let run = 150, idle = 360, avgNodes = nodes, price = s.r; const steps = [];
+      const cost = () => (p.head.count * p.head.r + avgNodes * price) * (run + idle + 12) / 60;
+      steps.push(['Baseline', cost()]);
+      FX.forEach(([k, l]) => { if (!on[k]) return; if (k === 'auto') idle = 0; if (k === 'skew') run *= .75; if (k === 'spill') run *= .8; if (k === 'files') run *= .85; if (k === 'dyn') avgNodes *= .7; if (k === 'spot') price = s.r * (.5 + .5 * p.spot); steps.push([l, cost()]); });
+      return { run, steps };
+    };
+    const ch = mkChart($('#cv', el), { type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: [], borderRadius: 6 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => { const v = c.raw; return Array.isArray(v) ? `saves ${usd(v[1] - v[0])}` : usd(v); } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'cost per run ($)' } }, x: { ticks: { font: { size: 10 } } } } } });
+    const upd = () => {
+      const on = Object.fromEntries(FX.map(([k]) => [k, $('#f_' + k, el).checked])), { run, steps } = calc(on);
+      const labels = steps.map(x => x[0]).concat(steps.length > 1 ? ['After'] : []), data = [], colors = [];
+      steps.forEach((x, i) => { if (i === 0) { data.push(x[1]); colors.push(K.berry); } else { data.push([x[1], steps[i - 1][1]]); colors.push(K[FX.find(f => f[1] === x[0])[2]]); } });
+      if (steps.length > 1) { data.push(steps[steps.length - 1][1]); colors.push(K.grass); }
+      ch.data.labels = labels; ch.data.datasets[0].data = data; ch.data.datasets[0].backgroundColor = colors; ch.update();
+      const c = steps[steps.length - 1][1]; $('#rt', el).textContent = Math.round(run) + ' min'; $('#cr', el).textContent = usd(c); $('#pm', el).textContent = usd(c * 30, 0) + (steps.length > 1 ? ` (was ${usd(steps[0][1] * 30, 0)})` : '');
+    };
+    FX.forEach(([k]) => $('#f_' + k, el).onchange = upd); upd();
+  }
+}];
+
+/* =========================================================
+   Quick checks
+   ========================================================= */
+const QUIZ = [
+  [
+    ['Why can a transient cluster be deleted after each run without losing data?', ['Clusters back up automatically', 'The data lives in object storage, not on the cluster’s disks', 'Spark keeps data in memory forever', 'It cannot; data is always lost'], 1, 'Separating storage from compute is what makes clusters disposable.'],
+    ['In a data lake, what is “raw/events/date=2026-10-20/” in object storage?', ['A real folder on a disk', 'A prefix: part of each object’s key, used like a folder', 'A database table', 'A cluster name'], 1, 'Object stores are flat; slashes are part of the key.'],
+    ['A job finishes at 01:30 but the cluster has no automatic shutdown. What happens?', ['It shuts down by itself at midnight', 'It keeps running and billing until someone deletes it', 'The provider pauses it for free', 'Spark deletes it'], 1, 'Always configure automatic shutdown for transient clusters.'],
+    ['Which nodes are safest to run on Spot capacity?', ['Primary / head nodes', 'Core nodes that hold HDFS data', 'Task nodes that only run tasks', 'All of them, always'], 2, 'Losing a task node only means retrying its tasks; losing data-holding nodes forces recomputation.'],
+    ['How should the cluster get permission to read the data lake?', ['Paste access keys into the job script', 'Use a role or managed identity with a narrow policy', 'Make the bucket public', 'Email the keys to the team'], 1, 'Short-lived credentials from an identity, scoped to what the job needs.']
+  ],
+  [
+    ['In a Spark stage, max task duration is 4 minutes while the median is 2 seconds. Most likely cause?', ['Small files', 'Data skew', 'Too much memory', 'Network encryption'], 1, 'One oversized partition makes one task much slower than the rest.'],
+    ['Spill (disk) is several GB. A good first fix is…', ['Fewer shuffle partitions', 'More shuffle partitions or more memory per core', 'Delete the logs', 'Turn off AQE'], 1, 'Smaller chunks per task or more memory per task stop the overflow.'],
+    ['A job reads 200,000 files of 256 KB each. What helps most?', ['More executor memory', 'Compacting into files around 128–512 MB', 'Adding a head node', 'Lower shuffle partitions'], 1, 'Per-file overhead dominates; fewer, bigger files fix it.'],
+    ['Executors are 8 GB with 5 cores on nodes with 16 cores and 56 GB. What limits executors per node?', ['Memory', 'Cores', 'Disk', 'Nothing'], 1, '16 ÷ 5 = 3 executors by cores; memory would allow 6.'],
+    ['Untagged spend appears in the cost report. What does it usually mean?', ['A billing error', 'A resource nobody owns or remembers, often an idle cluster', 'Free usage', 'Storage discounts'], 1, 'Tags make ownership visible; untagged cost is worth investigating immediately.']
+  ]
+];
+function quizStep(li){
+  return {
+    short: 'Quick check', quiz: true, title: 'Quick check', lead: 'Five questions. Click an answer to see if you got it.',
+    html: `<p>These questions cover the ideas from this lesson. Wrong answers are fine: read the explanation, then return to the step if it still feels unclear.</p>`,
+    key: li ? 'Watch four layers, read the stage summary, fix skew, spill and small files, then verify savings on the bill.' : 'Data in object storage, transient clusters, estimate first, Spot only for task nodes, identity not keys.',
+    terms: [],
+    vis(el){
+      el.innerHTML = QUIZ[li].map((q, qi) => `<div class="quiz-q"><div class="qt">${qi + 1}. ${q[0]}</div>${q[1].map((o, oi) => `<button class="quiz-opt" data-q="${qi}" data-o="${oi}">${o}</button>`).join('')}<div class="quiz-ex" id="ex${qi}">${q[3]}</div></div>`).join('') + `<div class="text-center fw-bold" id="score"></div>`;
+      const ans = {};
+      $$('.quiz-opt', el).forEach(b => b.onclick = () => {
+        const qi = +b.dataset.q, oi = +b.dataset.o, right = QUIZ[li][qi][2];
+        $$(`.quiz-opt[data-q="${qi}"]`, el).forEach(x => x.classList.remove('right', 'wrong'));
+        b.classList.add(oi === right ? 'right' : 'wrong'); if (oi !== right) $(`.quiz-opt[data-q="${qi}"][data-o="${right}"]`, el).classList.add('right');
+        $('#ex' + qi, el).style.display = 'block'; if (!(qi in ans)) ans[qi] = oi === right;
+        const n = Object.keys(ans).length; if (n === QUIZ[li].length) $('#score', el).textContent = `You got ${Object.values(ans).filter(Boolean).length} of ${n} right on the first try.`;
+        gsap.from(b, { scale: .96, duration: .2 });
+      });
+    }
+  };
+}
+
+/* =========================================================
+   App shell
+   ========================================================= */
+const LESSONS = [
+  { title: 'Deploying big data solutions on AWS EMR or Azure HDInsight', short: 'build and cost it', icon: 'bi-cloud-arrow-up-fill', hue: 'ocean', steps: [...L1, quizStep(0)] },
+  { title: 'Monitoring and managing cloud resources', short: 'watch and fix it', icon: 'bi-speedometer2', hue: 'tang', steps: [...L2, quizStep(1)] }];
+const state = { lesson: 0, step: 0, seen: [new Set(), new Set()] };
+const stepHue = i => HUES[i % HUES.length];
+
+function renderCards(){
+  $('#lessonCards').innerHTML = LESSONS.map((L, i) => {
+    const n = L.steps.length, done = state.seen[i].size;
+    return `<div class="col-md-6"><button class="lesson-card ${state.lesson === i ? 'active' : ''}" data-l="${i}" style="--lc:${K[L.hue]};--lcs:${SOFT[L.hue]}"><span class="lnum"><i class="bi ${L.icon}"></i></span><span class="flex-grow-1"><span class="ls d-block">Lesson ${i + 1} · ${L.short}</span><span class="lt d-block">${L.title}</span><span class="ls">12 steps and a quick check</span><span class="lprog d-block"><i style="width:${Math.round(done / n * 100)}%"></i></span></span></button></div>`;
+  }).join('');
+  $$('#lessonCards .lesson-card').forEach(b => b.onclick = () => { state.lesson = +b.dataset.l; state.step = 0; render(true); });
+}
+function renderRail(){
+  const L = LESSONS[state.lesson];
+  $('#railHead').innerHTML = `Lesson ${state.lesson + 1}<b>${L.title}</b>`;
+  $('#rail').innerHTML = L.steps.map((s, i) => { const h = s.quiz ? 'ink' : stepHue(i); return `<li><button class="${i === state.step ? 'active' : ''} ${state.seen[state.lesson].has(i) && i !== state.step ? 'done' : ''} ${s.quiz ? 'quiz' : ''}" data-i="${i}" style="--sc:${K[h]};--sc-soft:${SOFT[h]}"><span class="n">${s.quiz ? '<i class="bi bi-check2"></i>' : i + 1}</span><span>${s.short}</span></button></li>`; }).join('');
+  $$('#rail button').forEach(b => b.onclick = () => { state.step = +b.dataset.i; render(true); });
+}
+function renderProv(){ $$('.prov-switch button').forEach(b => b.classList.toggle('active', b.dataset.p === PROV)); }
+function render(scroll){
+  cleanup();
+  const L = LESSONS[state.lesson], s = L.steps[state.step], n = L.steps.length, h = s.quiz ? L.hue : stepHue(state.step);
+  state.seen[state.lesson].add(state.step);
+  const st = $('#stage'); st.style.setProperty('--accent', K[h]); st.style.setProperty('--accent-soft', SOFT[h]);
+  renderCards(); renderRail(); renderProv();
+  $('#stepMeta').textContent = s.quiz ? `Lesson ${state.lesson + 1} · quick check` : `Lesson ${state.lesson + 1} · step ${state.step + 1} of 12`;
+  $('#stepTitle').textContent = v(s.title); $('#stepLead').textContent = v(s.lead);
+  $('#prog').style.width = ((state.step + 1) / n * 100) + '%';
+  $('#explain').innerHTML = v(s.html);
+  const terms = v(s.terms) || [];
+  $('#side').innerHTML = `<div class="keycard"><div class="kt"><i class="bi bi-stars"></i> Key idea</div><p>${v(s.key)}</p></div>` + (terms.length ? `<div class="tool-box"><div class="kt">Names you will meet in ${T().short} and Spark</div>${terms.map(x => `<span class="term">${x}</span>`).join('')}</div>` : '');
+  const vis = $('#vis'); vis.innerHTML = ''; s.vis(vis);
+  $('#prev').disabled = state.lesson === 0 && state.step === 0;
+  const last = state.step === n - 1;
+  $('#next').innerHTML = last ? (state.lesson === 0 ? 'Start Lesson 2 <i class="bi bi-arrow-right"></i>' : 'Finished <i class="bi bi-check2"></i>') : 'Next <i class="bi bi-arrow-right"></i>';
+  $('#next').disabled = last && state.lesson === 1;
+  gsap.from(['#stepTitle', '#stepLead'], { y: 8, opacity: 0, duration: .35, stagger: .06 });
+  heroLoop();
+  if (scroll) { const top = st.getBoundingClientRect().top + window.scrollY - 12; if (window.scrollY > top) window.scrollTo({ top, behavior: REDUCED ? 'auto' : 'smooth' }); }
+}
+function go(d){
+  const n = LESSONS[state.lesson].steps.length;
+  let s = state.step + d;
+  if (s >= n) { if (state.lesson === 0) { state.lesson = 1; s = 0; } else return; }
+  if (s < 0) { if (state.lesson === 1) { state.lesson = 0; s = LESSONS[0].steps.length - 1; } else return; }
+  state.step = s; render(true);
+}
+/* hero: a transient cluster that starts, works, and shuts down, on a loop */
+function heroLoop(){
+  const box = $('#heroNodes'); if (!box) return;
+  box.innerHTML = [K.lilac, K.ocean, K.ocean, K.ocean, K.ocean, K.tang, K.tang].map((c, i) => `<div class="hc-node" style="background:${c}"><i class="bi ${i ? 'bi-cpu' : 'bi-diagram-3-fill'}"></i></div>`).join('');
+  if (REDUCED) { $('#heroState').textContent = 'RUNNING'; return; }
+  const nodes = $$('.hc-node', box), o = { c: 0 }, tl = gsap.timeline({ repeat: -1, repeatDelay: .6 });
+  tl.set(nodes, { scale: 0, opacity: 0 }).set(o, { c: 0 }).call(() => { $('#heroState').textContent = 'STARTING'; $('#heroCost').textContent = '$0.00'; })
+    .to(nodes, { scale: 1, opacity: 1, stagger: .12, duration: .35, ease: 'back.out(2)' })
+    .call(() => $('#heroState').textContent = 'RUNNING')
+    .to(nodes, { y: -6, yoyo: true, repeat: 5, duration: .25, stagger: .05 })
+    .to(o, { c: 2.84, duration: 3, ease: 'none', onUpdate: () => $('#heroCost').textContent = usd(o.c) }, '<')
+    .call(() => $('#heroState').textContent = 'TERMINATED')
+    .to(nodes, { scale: 0, opacity: 0, stagger: .08, duration: .3 }).to({}, { duration: 1.2 });
+}
+$$('.prov-switch button').forEach(b => b.onclick = () => { PROV = b.dataset.p; render(false); });
+$('#prev').onclick = () => go(-1); $('#next').onclick = () => go(1); $('#replay').onclick = () => render(false);
+document.addEventListener('keydown', e => {
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1);
+});
+render(false);
+</script>
+</body>
+</html>
